@@ -13,9 +13,9 @@ Agents MUST follow this tool priority. Using the wrong tool wastes tool calls an
 | Priority | Tool | When to use | When NOT to use |
 |----------|------|-------------|-----------------|
 | **1** | `WebSearch` | General research, discovery, finding sources, fact-checking | Never for direct file downloads |
-| **2** | `mcp__gemini-search__web_search` | Fallback when WebSearch fails or returns thin results | Same as above |
+| **2** | `mcp__gemini-search__web_search` | **Optional / recommended.** Fallback when WebSearch fails or returns thin results. Requires Gemini CLI (`npm install -g @anthropic-ai/gemini-cli`). | Same as above |
 | **3** | `WebFetch` | ONLY for known-reliable domains (see whitelist below). Fetching specific pages after discovering them via search. | NEVER for news sites, blogs, analyst sites — high 404/403/paywall rate |
-| **4** | `Bash` | File ops, data processing (`jq`, `python3`), project scripts (`${CLAUDE_PLUGIN_ROOT}/tools/query.sh`); `curl` and `agent-browser` are acceptable as WebFetch fallbacks per the multi-tool fallback chain below | NEVER as the *primary* search tool — always try WebSearch / `mcp__gemini-search__web_search` first |
+| **4** | `Bash` | File ops, data processing (`jq`, `python3`), project scripts (`${CLAUDE_PLUGIN_ROOT}/tools/query.sh`); `curl` and `agent-browser` are acceptable as WebFetch fallbacks per the multi-tool fallback chain below | NEVER as the *primary* search tool — always try WebSearch first |
 
 ### WebFetch domain whitelist (reliable, low block rate)
 

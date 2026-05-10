@@ -189,7 +189,30 @@ else
   fi
 fi
 
-# Step 4: Check permissions
+# Step 4: Check optional dependencies
+echo ""
+log_info "Checking optional dependencies..."
+
+if command -v gemini >/dev/null 2>&1; then
+  log_ok "Gemini CLI found ($(gemini --version 2>/dev/null || echo 'version unknown'))"
+  log_info "  mcp__gemini-search__web_search will be available as a search fallback"
+else
+  log_warn "Gemini CLI not found"
+  echo ""
+  echo "  The plugin uses mcp__gemini-search__web_search as a search fallback."
+  echo "  Without Gemini CLI, research still works but resilience is reduced"
+  echo "  for non-English sources and real-time queries."
+  echo ""
+  echo "  To install:"
+  echo "    npm install -g @anthropic-ai/gemini-cli"
+  echo ""
+  echo "  The plugin intentionally does NOT bundle .claude/mcp.json to avoid"
+  echo "  collision with any Gemini MCP server you may already have configured."
+  echo "  See references/known-open-problems.md § Open problem 4 for details."
+  echo ""
+fi
+
+# Step 5: Check permissions
 echo ""
 log_info "Checking required permissions..."
 
@@ -202,7 +225,7 @@ else
   exit 1
 fi
 
-# Step 5: Summary
+# Step 6: Summary
 echo ""
 echo "========================================"
 echo "  Setup Complete"

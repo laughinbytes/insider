@@ -36,6 +36,38 @@ These are not bugs to fix in the next release. They are open research problems. 
 
 **Open research direction:** Cross-referencing claims against external public datasets (SEC filings, industry reports, standard benchmarks) at extraction time. Currently not in scope — would require building a "reasonable-range registry" per domain.
 
+## Open problem 4 — MCP server namespace collision (insider-specific)
+
+**The class of issue:** The plugin uses `mcp__gemini-search__web_search` as a fallback search tool in its multi-tool chain. This tool requires the Gemini CLI (`npm install -g @anthropic-ai/gemini-cli`) and a corresponding MCP server entry in Claude Code's MCP configuration. If the plugin bundles its own `.claude/mcp.json`, it may collide with a Gemini MCP server the user already has configured globally or in another plugin.
+
+**Concrete scenario:**
+1. User already has `gemini` MCP server configured in `~/.claude/mcp.json` or another plugin's `.claude/mcp.json`
+2. Insider plugin also ships a `.claude/mcp.json` with the same server name or type
+3. Claude Code runtime sees duplicate server registrations — behavior is undefined (could be "last wins", could error, could create ambiguous tool routing)
+
+**Why this is an open problem, not a bug to fix now:**
+- Claude Code's MCP resolution order across plugin-scope vs. user-scope vs. global-scope `.claude/mcp.json` is not documented as stable
+- The "right" answer depends on whether plugins should be self-contained (ship their own MCP configs) or rely on user-installed tools
+- If we remove the gemini fallback entirely, research resilience degrades (WebSearch alone has coverage gaps for non-English sources and real-time data)
+
+**Current mitigation:**
+- **Do NOT bundle `.claude/mcp.json`** in the plugin — avoids collision entirely at the cost of requiring manual user setup
+- `tools/setup.sh` checks for Gemini CLI availability and warns (does not fail) if missing, with install instructions
+- `references/data-sources.md` marks `mcp__gemini-search__web_search` as priority 2 **(optional / recommended)** — agents fall back through the full chain even without it
+- If the tool is unavailable at runtime, Claude Code will prompt for permission once; if denied, the orchestrator reports it and the agent continues with WebSearch + WebFetch + Bash fallback
+
+**Residual risk:**
+- Users who don't install Gemini CLI lose one tier of search resilience
+- The plugin's hook (`hooks/hooks.json`) still references `mcp__gemini-search__web_search` in its matcher — if the tool is never invoked, the hook simply never fires for it (harmless)
+- If a future Claude Code version changes MCP resolution semantics, this assessment may need revisiting
+
+**Open research direction:**
+- Wait for Claude Code to document stable MCP server namespacing / scoping rules for plugins
+- Or: lobby for plugin-declared "recommended tools" that prompt the user to install without bundling config files
+- Or: implement a runtime capability probe that detects whether `mcp__gemini-search__web_search` is available before routing to it, rather than relying on static fallback chains
+
+---
+
 ## Open problem 3 — Novel-class semantic errors
 
 **The class of error:** New types of semantic mistake we haven't seen yet, not covered by any of the 6+ checks in `verifier.md`. By definition, we don't know what they are until they occur.
