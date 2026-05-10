@@ -5,7 +5,8 @@ Deep-dive industry and company analysis using parallel specialized agents with c
 ## Architecture
 
 ```
-Raw layer (markdown)              Data layer (jsonl)         Reading layer (HTML)
+Research layer (markdown)         Data layer (jsonl)         Reading layer (HTML)
+└─ machines/agents                └─ queries/analytics       └─ humans
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 /industry <industry>
@@ -42,7 +43,7 @@ research/ + data/ + reading/
 |---------|----------|
 | `/industry <industry>` | Decode a sector |
 | `/company <ticker>` | Diligence a specific company |
-| `/consume <slug>` | Regenerate the reading from existing raw |
+| `/consume <slug>` | Regenerate the reading from existing research |
 | `/lens <slug> <stakeholder>` | Stakeholder-filtered prep doc |
 | `/audit <slug>` | Freshness check using data layer |
 
@@ -118,7 +119,7 @@ Optional flags: `--check-only` (verify only) and `--project-root <dir>` (target 
 ## Output structure
 
 ```
-research/                          # Raw layer (markdown)
+research/                          # Research layer (markdown) — for machines/agents
 ├── industries/<slug>/
 │   ├── thesis.md
 │   ├── macro.md
@@ -140,13 +141,13 @@ research/                          # Raw layer (markdown)
     ├── sources.md
     └── meta.json
 
-data/                              # Structured data layer (cross-project, append/merge)
+data/                              # Data layer (jsonl) — for queries/analytics, cross-project append/merge
 ├── claims.jsonl
 ├── entities.json
 ├── sources.jsonl
 └── metrics.jsonl
 
-reading/                           # Human-consumable HTML (one file per slug)
+reading/                           # Reading layer (HTML) — for humans, single file per slug
 └── <slug>/
     └── index.html
 

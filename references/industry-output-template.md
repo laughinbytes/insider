@@ -1,6 +1,6 @@
 # Output template
 
-Exact structure for every file produced by `/industry`. Raw layer optimized for machine extraction. Every file gets YAML frontmatter. Prose is for narrative only; structured data lives in tables.
+Exact structure for every file produced by `/industry`. Research layer optimized for machine extraction. Every file gets YAML frontmatter. Prose is for narrative only; structured data lives in tables.
 
 ## Directory layout (per industry)
 

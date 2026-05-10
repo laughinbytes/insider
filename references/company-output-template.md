@@ -1,6 +1,6 @@
 # Company output template
 
-Exact structure for files produced by `/company`. Raw layer optimized for machine extraction. Every file gets YAML frontmatter. Prose is for narrative only; structured data lives in tables.
+Exact structure for files produced by `/company`. Research layer optimized for machine extraction. Every file gets YAML frontmatter. Prose is for narrative only; structured data lives in tables.
 
 ## Directory layout (per company)
 

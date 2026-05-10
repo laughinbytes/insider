@@ -14,8 +14,8 @@ Generate a human-consumable HTML artifact from existing raw research. This is an
 ## Automatic invocation
 
 This skill is **automatically invoked** at the end of `/industry` and `/company` skills. You only need to run it manually if:
-- You want to regenerate consume without regenerating raw
-- You modified raw files and want to refresh consume
+- You want to regenerate the reading without regenerating the research
+- You modified research files and want to refresh the reading
 
 ## Inputs
 
