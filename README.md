@@ -11,20 +11,20 @@ Research layer (markdown)         Data layer (jsonl)         Reading layer (HTML
 
 /industry <industry>
   ↓
-Phase 1: macro-agent              (blocking)
+Phase 1: macro              (blocking)
   ↓
-Phase 2: economics-agent          (parallel)  ─┐
-         competitive-agent        (parallel)  ─┘
+Phase 2: economics          (parallel)  ─┐
+         competition        (parallel)  ─┘
   ↓
-Phase 3: synthesis-agent          (blocking)
+Phase 3: synthesis          (blocking)
   ↓
 Phase 3.5: Committee Vote         (3 agents in parallel)
   ↓
-Phase 3.7: data-extraction-agent  (blocking)   ← reads raw md → writes data layer jsonl
+Phase 3.7: extractor  (blocking)   ← reads raw md → writes data layer jsonl
   ↓
-Phase 4: consume-agent            (blocking)   ← single HTML file, inline SVG, EN/中文 toggle
+Phase 4: assembler            (blocking)   ← single HTML file, inline SVG, EN/中文 toggle
   ↓
-Phase 4.5: verify-numerics + logic-verifier-agent  (blocking, two-stage)
+Phase 4.5: verify-numerics + verifier  (blocking, two-stage)
   ↓
 research/ + data/ + reading/
 ```
@@ -64,26 +64,26 @@ research/ + data/ + reading/
 
 | Phase | Agent | Output | Parallel? |
 |-------|-------|--------|-----------|
-| 1 | macro-agent | macro.md | No |
-| 2 | economics-agent | economics.md | Yes |
-| 2 | competitive-agent | players.md | Yes |
-| 3 | synthesis-agent | thesis.md, scenarios.md, analogs.md, gaps.md, open-secrets.md, sources.md | No |
-| 3.5 | investor-agent + expert-agent + skeptic-agent | committee vote (no file) | Yes |
-| 3.7 | data-extraction-agent | claims.jsonl, sources.jsonl, entities.json, metrics.jsonl (append/merge) | No |
-| 4 | consume-agent | reading/<slug>/index.html | No |
-| 4.5 | verify-numerics.sh + logic-verifier-agent | phase-4.5-logic-review.json | No |
+| 1 | macro | macro.md | No |
+| 2 | economics | economics.md | Yes |
+| 2 | competition | players.md | Yes |
+| 3 | synthesis | thesis.md, scenarios.md, analogs.md, gaps.md, open-secrets.md, sources.md | No |
+| 3.5 | investor + expert + skeptic | committee vote (no file) | Yes |
+| 3.7 | extractor | claims.jsonl, sources.jsonl, entities.json, metrics.jsonl (append/merge) | No |
+| 4 | assembler | reading/<slug>/index.html | No |
+| 4.5 | verify-numerics.sh + verifier | phase-4.5-logic-review.json | No |
 
 ### Company research (6 phases)
 
 | Phase | Agent | Output | Parallel? |
 |-------|-------|--------|-----------|
-| 1 | filings-agent | narrative.md | No |
-| 2 | financials-agent | financials.md | Yes |
-| 2 | competitive-agent | competitive.md | Yes |
-| 3 | synthesis-agent | thesis.md, scenarios.md, gaps.md, sources.md | No |
-| 3.7 | data-extraction-agent | data layer jsonl | No |
-| 4 | consume-agent | reading/<slug>/index.html | No |
-| 4.5 | verify-numerics.sh + logic-verifier-agent | phase-4.5-logic-review.json | No |
+| 1 | filings | narrative.md | No |
+| 2 | financials | financials.md | Yes |
+| 2 | competition | competitive.md | Yes |
+| 3 | synthesis | thesis.md, scenarios.md, gaps.md, sources.md | No |
+| 3.7 | extractor | data layer jsonl | No |
+| 4 | assembler | reading/<slug>/index.html | No |
+| 4.5 | verify-numerics.sh + verifier | phase-4.5-logic-review.json | No |
 
 ## Permissions
 
@@ -175,7 +175,7 @@ The verifier stack catches a defined set of error classes (fabrication, broken a
 2. **Constituent plausibility** — declared values that are syntactically correct but factually wrong
 3. **Novel-class semantic errors** — error patterns we haven't seen yet
 
-Mitigations are layered (anti-amorphous-label rule, transition constituent decomposition, skeptic-agent structural-overlap check), but residual risk is real and acknowledged. Domain-expert review of high-stakes claims remains necessary.
+Mitigations are layered (anti-amorphous-label rule, transition constituent decomposition, skeptic structural-overlap check), but residual risk is real and acknowledged. Domain-expert review of high-stakes claims remains necessary.
 
 ## Query tools
 

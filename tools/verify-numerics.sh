@@ -58,7 +58,7 @@ CLAIMS_COUNT=$(printf '%s\n' "$PROJECT_CLAIMS" | grep -c '^.' || true)
 
 if [[ ${CLAIMS_COUNT:-0} -eq 0 ]]; then
   echo "ERROR: no claims found for project '$SLUG' in $CLAIMS_FILE" >&2
-  echo "  (run /industry $SLUG --resume or data-extraction-agent first)" >&2
+  echo "  (run /industry $SLUG --resume or extractor first)" >&2
   exit 2
 fi
 
@@ -259,7 +259,7 @@ fi
 
 if [[ "$MODE" == "regex" ]]; then
 
-  log "(running regex heuristic — for clean output, have consume-agent emit numerics.json)"
+  log "(running regex heuristic — for clean output, have assembler emit numerics.json)"
   log ""
 
   TEXT=$(awk '

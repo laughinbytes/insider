@@ -4,13 +4,13 @@ Multi-agent voting system for quality validation. Runs after Phase 3 synthesis c
 
 ## When to run
 
-After `synthesis-agent` completes and passes the Quality Gate (4 bottom lines met).
+After `synthesis` completes and passes the Quality Gate (4 bottom lines met).
 
 ## Committee members (spawn in parallel)
 
-1. **`${CLAUDE_PLUGIN_ROOT}/agents/investor-agent.md`** — Would this lead to an investment decision?
-2. **`${CLAUDE_PLUGIN_ROOT}/agents/expert-agent.md`** — Would an industry insider find this novel?
-3. **`${CLAUDE_PLUGIN_ROOT}/agents/skeptic-agent.md`** — What are the vulnerabilities?
+1. **`${CLAUDE_PLUGIN_ROOT}/agents/investor.md`** — Would this lead to an investment decision?
+2. **`${CLAUDE_PLUGIN_ROOT}/agents/expert.md`** — Would an industry insider find this novel?
+3. **`${CLAUDE_PLUGIN_ROOT}/agents/skeptic.md`** — What are the vulnerabilities?
 
 ## Voting process
 
@@ -20,9 +20,9 @@ Phase 3 synthesis complete
 Quality Gate passed (4 bottom lines)
     ↓
 Spawn 3 committee members in parallel:
-    ├── investor-agent → reads thesis + scenarios → votes
-    ├── expert-agent → reads thesis + open-secrets → votes
-    └── skeptic-agent → reads all files → votes
+    ├── investor → reads thesis + scenarios → votes
+    ├── expert → reads thesis + open-secrets → votes
+    └── skeptic → reads all files → votes
     ↓
 Orchestrator collects votes
     ↓
@@ -65,7 +65,7 @@ Orchestrator writes `.checkpoint/industries/<slug>/phase-3-committee.json`:
 ## Recovery
 
 If committee FAILs:
-1. Orchestrator sends all 3 votes + concerns to `synthesis-agent`
+1. Orchestrator sends all 3 votes + concerns to `synthesis`
 2. Synthesis-agent has one round to address concerns
 3. Re-run committee vote (only the dissenting members need to re-vote)
 4. If still FAIL → mark as partial, continue to Phase 3.7 with warning

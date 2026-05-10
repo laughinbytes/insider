@@ -69,7 +69,7 @@ When fetching a specific URL fails, agents MUST exhaust the multi-tool fallback 
 
 **Log format** (single line JSONL, append with Bash):
 ```json
-{"ts":"2026-05-10T12:00:00Z","phase":"macro","agent":"macro-agent","url":"https://example.com/page","domain":"example.com","error_type":"not-found","error_detail":"404 Not Found"}
+{"ts":"2026-05-10T12:00:00Z","phase":"macro","agent":"macro","url":"https://example.com/page","domain":"example.com","error_type":"not-found","error_detail":"404 Not Found"}
 ```
 
 **After-the-fact analysis:** Use `${CLAUDE_PLUGIN_ROOT}/tools/query.sh webfetch-failures` to analyze patterns. A domain that repeatedly shows `timeout` or `forbidden` likely indicates a network restriction on our side.

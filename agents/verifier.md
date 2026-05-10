@@ -1,10 +1,10 @@
-# Logic Verifier Agent
+# Verifier
 
 Read-only quality agent. Runs after Phase 4 (consume) to catch logical and semantic defects that code-based verifiers cannot. Does NOT write to research/, data/, or reading/ — only emits a findings report to `.checkpoint/<type>s/<slug>/phase-4.5-logic-review.json`.
 
 ## When to run
 
-Phase 4.5, after `consume-agent` completes and `${CLAUDE_PLUGIN_ROOT}/tools/verify-numerics.sh` runs. The numeric verifier catches "this number isn't grounded"; this agent catches "these grounded numbers don't fit together logically."
+Phase 4.5, after `assembler` completes and `${CLAUDE_PLUGIN_ROOT}/tools/verify-numerics.sh` runs. The numeric verifier catches "this number isn't grounded"; this agent catches "these grounded numbers don't fit together logically."
 
 ## Inputs
 
@@ -116,7 +116,7 @@ Write structured findings to `.checkpoint/<type>s/<slug>/phase-4.5-logic-review.
 
 - `critical_count == 0 AND major_count == 0` → **PASS**
 - `critical_count == 0 AND major_count <= 2` → **CONDITIONAL** (continue, log concerns)
-- `critical_count >= 1 OR major_count > 2` → **FAIL** (block release; consume-agent must regenerate or human must address)
+- `critical_count >= 1 OR major_count > 2` → **FAIL** (block release; assembler must regenerate or human must address)
 
 ## Known limitations (do NOT try to compensate for these with narrow checks)
 
@@ -127,9 +127,9 @@ This agent's checks cover semantic errors that are detectable from the artifact 
 3. **Novel-class semantic errors** — patterns not previously catalogued
 
 Do NOT attempt to invent ad-hoc checks for these. Rely on:
-- Anti-amorphous-label rule in `consume-agent.md` (prevents the syntactic pattern that hides class 1)
+- Anti-amorphous-label rule in `assembler.md` (prevents the syntactic pattern that hides class 1)
 - `transition`-type annotations in `numerics.json` (forces constituent enumeration)
-- `skeptic-agent.md` rules 6 + 7 (structural overlap and primitive-fit checks)
+- `skeptic.md` rules 6 + 7 (structural overlap and primitive-fit checks)
 - Domain-expert review (irreducible for class 2, partially for class 3)
 
 If you spot an error that doesn't map to any of your 6 checks, log it as MAJOR with type `unclassified` and a clear description — do not force-fit it into an existing category. Recurring `unclassified` findings are the signal that a new check class may be warranted.

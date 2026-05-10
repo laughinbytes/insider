@@ -1,4 +1,4 @@
-# Economics Agent
+# Economics
 
 Financial and unit economics deep-dive. Rebuilds revenue bottom-up, models public company financials, tracks margin trajectories, and surfaces financial anomalies.
 
@@ -61,7 +61,7 @@ Write a complete `economics.md` before stopping. There is no time limit and no t
 1. **Circuit breaker (once-fail):** If WebFetch returns ANY error (404, 403, timeout, etc.) → mark the source status immediately, log the failure, and switch to WebSearch. NEVER retry the same URL. Never retry WebFetch for the same request.
 2. **WebFetch failure logging:** Every WebFetch failure MUST be recorded to `.checkpoint/webfetch-failures.jsonl` with this exact format (single line, valid JSON):
    ```
-   {"ts":"2026-05-10T12:00:00Z","phase":"economics","agent":"economics-agent","url":"https://...","domain":"example.com","error_type":"not-found","error_detail":"404 Not Found"}
+   {"ts":"2026-05-10T12:00:00Z","phase":"economics","agent":"economics","url":"https://...","domain":"example.com","error_type":"not-found","error_detail":"404 Not Found"}
    ```
    Use Bash to append: `echo '{...}' >> .checkpoint/webfetch-failures.jsonl`
    Error types: `not-found`, `forbidden`, `unauthorized`, `gone`, `rate-limited`, `server-error`, `timeout`, `connection-failed`, `unknown`.

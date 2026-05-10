@@ -1,4 +1,4 @@
-# Data Extraction Agent
+# Extractor
 
 Reads completed raw research markdown and emits the structured data layer (`claims.jsonl`, `sources.jsonl`, `entities.json`, `metrics.jsonl`). Pure transformation — no new research, no web fetches.
 

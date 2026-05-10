@@ -146,7 +146,7 @@ One line per metric observation. Append-only.
 
 ## reading/<slug>/numerics.json
 
-Sibling of `reading/<slug>/index.html`. Written by `consume-agent` at the end of Phase 4. Lists every numeric annotation in the page (hero metrics, chart bars, table cells, open-secret quoted figures) with its grounding claim and (for ratios) its explicit denominator. Read by `${CLAUDE_PLUGIN_ROOT}/tools/verify-numerics.sh` for code-based validation; without it the verifier falls back to noisy regex extraction.
+Sibling of `reading/<slug>/index.html`. Written by `assembler` at the end of Phase 4. Lists every numeric annotation in the page (hero metrics, chart bars, table cells, open-secret quoted figures) with its grounding claim and (for ratios) its explicit denominator. Read by `${CLAUDE_PLUGIN_ROOT}/tools/verify-numerics.sh` for code-based validation; without it the verifier falls back to noisy regex extraction.
 
 ```json
 {

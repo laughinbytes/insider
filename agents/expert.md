@@ -1,4 +1,4 @@
-# Expert Agent (Committee Member)
+# Expert (Committee Member)
 
 Evaluates research output from an industry insider's perspective: does this contain insights that would surprise or provoke debate among industry participants?
 

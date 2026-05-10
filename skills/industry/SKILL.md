@@ -16,25 +16,25 @@ allowed-tools: [Read, Write, Edit, Bash, WebSearch, WebFetch, mcp__gemini-search
 ```
 User: /industry X
   ↓
-Phase 1: macro-agent              (blocking)
+Phase 1: macro              (blocking)
   ↓ PASS
 Review Gate 1                     (blocking)
   │ ├── PASS / CONDITIONAL → Phase 2
   │ └── FAIL → Round 2 → Review Gate 1 again
   │     └── Still FAIL → mark PARTIAL → Phase 2
   ↓
-Phase 2: economics + competitive  (parallel)
+Phase 2: economics + competition  (parallel)
   ↓ both PASS
 Review Gate 2                     (blocking)
   │ ├── PASS / CONDITIONAL → Phase 3
   │ └── FAIL → Round 2 → Review Gate 2 again
   │     └── Still FAIL → mark PARTIAL → Phase 3
   ↓
-Phase 3: synthesis-agent          (blocking)
+Phase 3: synthesis          (blocking)
   ↓
 Quality Gate                      (orchestrator checks 4 bottom lines)
   ↓ PASS
-Review Gate 3                     (review-agent checks technical quality)
+Review Gate 3                     (reviewer checks technical quality)
   │ ├── PASS / CONDITIONAL → Committee
   │ └── FAIL → Round 2 → Review Gate 3 again
   │     └── Still FAIL → mark PARTIAL → Committee
@@ -45,9 +45,9 @@ Phase 3.5: Committee Vote         (parallel, 3 agents)
   │ └── otherwise → FAIL → synthesis Round 2 → Committee again
   │     └── Still FAIL → mark PARTIAL → Phase 3.7
   ↓
-Phase 3.7: data-extraction-agent  (blocking)
+Phase 3.7: extractor  (blocking)
   ↓
-Phase 4: consume-agent            (blocking)
+Phase 4: assembler            (blocking)
   ↓ PASS
 Auto-open browser
 Final Report
@@ -71,7 +71,7 @@ The search-backup `PostToolUse` hook is shipped as `${CLAUDE_PLUGIN_ROOT}/hooks/
 |------|---------|--------|
 | **Circuit breaker** | Same URL returns any error once | Mark `[dead]`, log failure, switch to WebSearch |
 | **Marginal-insight stop** | Agent's last 3 fetches produced nothing new | Agent writes current state and stops |
-| **Review gate** | Phase 1/2/3 complete | Spawn review-agent to check coverage, gaps, contradictions |
+| **Review gate** | Phase 1/2/3 complete | Spawn reviewer to check coverage, gaps, contradictions |
 | **Hooks backup** | Every search tool call | PostToolUse hook auto-saves query+result to `.checkpoint/search-backup.jsonl` |
 | **Quality over speed** | Marginal insight still high | Continue researching; no hard cap |
 | **CDN zero** | Consume phase | All charts/diagrams are inline SVG; zero external dependencies |
@@ -104,11 +104,11 @@ On invocation:
 
 ## Phase 1 — Macro foundation (blocking, single agent)
 
-Spawn `macro-agent` via Task tool.
+Spawn `macro` via Task tool.
 
 Pass:
 - Industry slug and name
-- `${CLAUDE_PLUGIN_ROOT}/agents/macro-agent.md` (full context)
+- `${CLAUDE_PLUGIN_ROOT}/agents/macro.md` (full context)
 - `${CLAUDE_PLUGIN_ROOT}/references/frameworks.md`
 - `${CLAUDE_PLUGIN_ROOT}/references/data-sources.md`
 - `${CLAUDE_PLUGIN_ROOT}/references/trust-signal-rules.md`
@@ -124,15 +124,15 @@ Write `.checkpoint/industries/<slug>/phase-1-macro.json`:
 
 ### Review gate
 
-After macro-agent returns, spawn `review-agent` for Phase 1 checks (see `${CLAUDE_PLUGIN_ROOT}/agents/review-agent.md` § "Phase 1 (macro)" for the canonical checklist). Verdict: PASS / CONDITIONAL / FAIL.
+After macro returns, spawn `reviewer` for Phase 1 checks (see `${CLAUDE_PLUGIN_ROOT}/agents/reviewer.md` § "Phase 1 (macro)" for the canonical checklist). Verdict: PASS / CONDITIONAL / FAIL.
 
-If FAIL → spawn `macro-agent` Round 2 with the gap list.
+If FAIL → spawn `macro` Round 2 with the gap list.
 
 ### Recovery
 
-If macro-agent fails:
+If macro fails:
 1. Check `.checkpoint/search-backup.jsonl` for raw research data
-2. If backup exists: spawn `recovery-agent` to reconstruct from backup, mark as `partial`
+2. If backup exists: spawn `recovery` to reconstruct from backup, mark as `partial`
 3. If no backup: retry once with simplified scope
 4. If still fails: mark as `partial`, continue with warning
 
@@ -140,15 +140,15 @@ If macro-agent fails:
 
 After macro completes, spawn TWO agents in parallel via Task tool. Each agent writes its output file when marginal insight drops.
 
-**Agent A: economics-agent**
+**Agent A: economics**
 - Reads `macro.md` from disk
 - Writes `research/industries/<slug>/economics.md`
-- Context: `${CLAUDE_PLUGIN_ROOT}/agents/economics-agent.md` + frameworks + data-sources
+- Context: `${CLAUDE_PLUGIN_ROOT}/agents/economics.md` + frameworks + data-sources
 
-**Agent B: competitive-agent**
+**Agent B: competition**
 - Reads `macro.md` from disk
 - Writes `research/industries/<slug>/players.md`
-- Context: `${CLAUDE_PLUGIN_ROOT}/agents/competitive-agent.md` + frameworks + data-sources
+- Context: `${CLAUDE_PLUGIN_ROOT}/agents/competition.md` + frameworks + data-sources
 
 Both run simultaneously. The orchestrator waits for both to complete before proceeding.
 
@@ -158,7 +158,7 @@ Write `.checkpoint/industries/<slug>/phase-2-deep-dive.json` after both agents r
 
 ### Review gate
 
-After both agents return, spawn `review-agent` for Phase 2 economics + competitive checks (see `${CLAUDE_PLUGIN_ROOT}/agents/review-agent.md` for the canonical checklists). Cross-check: do economics and competitive contradict each other on any key metric?
+After both agents return, spawn `reviewer` for Phase 2 economics + competitive checks (see `${CLAUDE_PLUGIN_ROOT}/agents/reviewer.md` for the canonical checklists). Cross-check: do economics and competitive contradict each other on any key metric?
 
 If FAIL → spawn Round 2 for the deficient agent.
 
@@ -167,7 +167,7 @@ If FAIL → spawn Round 2 for the deficient agent.
 If one agent fails and the other succeeds:
 - Continue with the successful agent's output
 - Check `.checkpoint/search-backup.jsonl` for failed agent's raw data
-- If backup exists: spawn `recovery-agent`, mark partial output
+- If backup exists: spawn `recovery`, mark partial output
 - If retry fails: mark section as "incomplete" in checkpoint, continue
 
 If both fail:
@@ -176,11 +176,11 @@ If both fail:
 
 ## Phase 3 — Synthesis (blocking, single agent)
 
-Spawn `synthesis-agent` via Task tool.
+Spawn `synthesis` via Task tool.
 
 Pass:
 - All completed raw files: `macro.md`, `economics.md`, `players.md`
-- `${CLAUDE_PLUGIN_ROOT}/agents/synthesis-agent.md`
+- `${CLAUDE_PLUGIN_ROOT}/agents/synthesis.md`
 - `${CLAUDE_PLUGIN_ROOT}/references/trust-signal-rules.md`
 
 The agent writes (heartbeat — one file at a time):
@@ -205,28 +205,28 @@ If any check fails, send the agent back to retry the failing section.
 
 ### Review gate (second pass)
 
-After quality gate passes, spawn `review-agent` for Phase 3 checks (see `${CLAUDE_PLUGIN_ROOT}/agents/review-agent.md` § "Phase 3 (synthesis)").
+After quality gate passes, spawn `reviewer` for Phase 3 checks (see `${CLAUDE_PLUGIN_ROOT}/agents/reviewer.md` § "Phase 3 (synthesis)").
 
-If FAIL → spawn `synthesis-agent` Round 2 with specific fixes.
+If FAIL → spawn `synthesis` Round 2 with specific fixes.
 
 ### Phase 3.5 — Committee Vote (parallel, 3 agents)
 
 After review gate passes, spawn **3 committee members in parallel**:
 
-**Member 1: `investor-agent`**
+**Member 1: `investor`**
 - Reads `thesis.md` + `scenarios.md`
 - Asks: "Would I invest based on this analysis? Why?"
 - Verdict: PASS / CONDITIONAL / FAIL
 
-**Member 2: `expert-agent`**
+**Member 2: `expert`**
 - Reads `thesis.md` + `open-secrets.md`
 - Asks: "Would an industry insider find this novel?"
 - Verdict: PASS / CONDITIONAL / FAIL
 
-**Member 3: `skeptic-agent`**
+**Member 3: `skeptic`**
 - Reads `thesis.md` + `open-secrets.md` + `macro.md`
 - Asks: "What are the vulnerabilities? What could be wrong?"
-- Verdict: PASS / CONDITIONAL / FAIL (derived from item-level KEEP/DEMOTE/DELETE counts — see `${CLAUDE_PLUGIN_ROOT}/agents/skeptic-agent.md` for mapping)
+- Verdict: PASS / CONDITIONAL / FAIL (derived from item-level KEEP/DEMOTE/DELETE counts — see `${CLAUDE_PLUGIN_ROOT}/agents/skeptic.md` for mapping)
 
 **Decision rules:** see `${CLAUDE_PLUGIN_ROOT}/references/committee-protocol.md` for the canonical decision table. Summary:
 
@@ -244,9 +244,9 @@ Write `.checkpoint/industries/<slug>/phase-3-synthesis.json`.
 
 ## Phase 3.7 — Data extraction (blocking, single agent)
 
-Spawn `data-extraction-agent` via Task tool. Pass:
+Spawn `extractor` via Task tool. Pass:
 - All raw files in `research/industries/<slug>/`
-- `${CLAUDE_PLUGIN_ROOT}/agents/data-extraction-agent.md`
+- `${CLAUDE_PLUGIN_ROOT}/agents/extractor.md`
 - `${CLAUDE_PLUGIN_ROOT}/references/schemas.md`
 
 The agent reads every raw markdown file and writes/appends:
@@ -261,10 +261,10 @@ Write `.checkpoint/industries/<slug>/phase-3.7-data.json` with `claims_extracted
 
 ## Phase 4 — Reading generation (blocking, single agent)
 
-Spawn `consume-agent` via Task tool.
+Spawn `assembler` via Task tool.
 
 Pass:
-- `${CLAUDE_PLUGIN_ROOT}/agents/consume-agent.md`
+- `${CLAUDE_PLUGIN_ROOT}/agents/assembler.md`
 - Industry slug
 
 The agent is an **intelligent designer**, not a template filler. It:
@@ -278,9 +278,9 @@ The agent is an **intelligent designer**, not a template filler. It:
 
 ### Review gate
 
-After consume-agent returns, spawn `review-agent` for Phase 4 checks. See `${CLAUDE_PLUGIN_ROOT}/agents/review-agent.md` § "Phase 4 (consume)".
+After assembler returns, spawn `reviewer` for Phase 4 checks. See `${CLAUDE_PLUGIN_ROOT}/agents/reviewer.md` § "Phase 4 (assembler)".
 
-If FAIL → spawn `consume-agent` Round 2 with fixes.
+If FAIL → spawn `assembler` Round 2 with fixes.
 
 ### Phase 4.5 — Verification (blocking, two-stage)
 
@@ -296,14 +296,14 @@ ${CLAUDE_PLUGIN_ROOT}/tools/verify-numerics.sh <slug>
 
 Exit codes: `0` all matched · `1` unmatched tokens or stale claims · `2` setup error.
 
-**Stage B — `logic-verifier-agent`** (LLM, semantic)
+**Stage B — `verifier`** (LLM, semantic)
 
-Spawn `${CLAUDE_PLUGIN_ROOT}/agents/logic-verifier-agent.md` for checks that code cannot do: arithmetic in chart denominators, cross-file contradictions, definition drift, inference-chain validity, scenario probability consistency, top-3 open-secret novelty, and source-claim spot-checks. Writes findings to `.checkpoint/industries/<slug>/phase-4.5-logic-review.json`.
+Spawn `${CLAUDE_PLUGIN_ROOT}/agents/verifier.md` for checks that code cannot do: arithmetic in chart denominators, cross-file contradictions, definition drift, inference-chain validity, scenario probability consistency, top-3 open-secret novelty, and source-claim spot-checks. Writes findings to `.checkpoint/industries/<slug>/phase-4.5-logic-review.json`.
 
 Verdicts:
 - `PASS` (no critical, no major) → proceed to Checkpoint 4
 - `CONDITIONAL` (no critical, ≤2 major) → proceed, log concerns to user
-- `FAIL` (≥1 critical or >2 major) → spawn `consume-agent` Round 2 with the findings list
+- `FAIL` (≥1 critical or >2 major) → spawn `assembler` Round 2 with the findings list
 
 **Why two stages:** Code catches "this number doesn't exist in our claims"; LLM catches "these grounded numbers don't fit together logically." The chart that motivated this phase (a bar labeled `40%` against the wrong denominator) needs the LLM stage — both numbers were independently grounded but the relationship between them was wrong.
 
@@ -350,8 +350,8 @@ spawn agent
     ├── returns {status: "error", errors: [...]}
     │   → read backup file
     │   → read existing output (if any)
-    │   → spawn recovery-agent with backup data
-    │   → recovery-agent writes formatted output
+    │   → spawn recovery with backup data
+    │   → recovery writes formatted output
     │   → if recovery succeeds → review gate
     │   → if recovery fails → mark partial → next phase
     │
@@ -364,7 +364,7 @@ spawn agent
 
 ### Recovery agent
 
-When an agent crashes, spawn `recovery-agent`:
+When an agent crashes, spawn `recovery`:
 
 **Inputs:**
 - `.checkpoint/search-backup.jsonl` (raw search data)

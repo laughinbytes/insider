@@ -1,19 +1,19 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
-  "_description": "Declarative permission manifest for the insider plugin. These permissions are required for sub-agents (macro, economics, competitive, synthesis, consume) to function correctly.",
+  "_description": "Declarative permission manifest for the insider plugin. These permissions are required for sub-agents (macro, economics, competition, synthesis, assembler) to function correctly.",
   "_version": "0.2.0",
   "permissions": {
     "allow": [
       {
         "tool": "Read",
         "scope": "all",
-        "required_by": ["macro", "economics", "competitive", "synthesis", "consume"],
+        "required_by": ["macro", "economics", "competition", "synthesis", "assembler"],
         "reason": "Agents read reference files, raw research, and checkpoint state"
       },
       {
         "tool": "Write",
         "scope": "all",
-        "required_by": ["macro", "economics", "competitive", "synthesis", "consume"],
+        "required_by": ["macro", "economics", "competition", "synthesis", "assembler"],
         "reason": "Agents write research output, checkpoints, and reading artifacts"
       },
       {

@@ -12,12 +12,12 @@ Produces structured company analysis using parallel specialized agents. **No fix
 ## Pipeline
 
 ```
-Phase 1: filings-agent            (blocking)    → narrative.md + raw filing extracts
-Phase 2: financials-agent         (parallel)    → financials.md
-          competitive-agent       (parallel)    → competitive.md
-Phase 3: synthesis-agent          (blocking)    → thesis.md, scenarios.md, gaps.md, sources.md
-Phase 3.7: data-extraction-agent  (blocking)    → claims/sources/entities/metrics jsonl
-Phase 4: consume-agent            (blocking)    → reading/<slug>/index.html (single bilingual file, zero deps)
+Phase 1: filings            (blocking)    → narrative.md + raw filing extracts
+Phase 2: financials         (parallel)    → financials.md
+          competition       (parallel)    → competitive.md
+Phase 3: synthesis          (blocking)    → thesis.md, scenarios.md, gaps.md, sources.md
+Phase 3.7: extractor  (blocking)    → claims/sources/entities/metrics jsonl
+Phase 4: assembler            (blocking)    → reading/<slug>/index.html (single bilingual file, zero deps)
 ```
 
 ## Permissions
@@ -53,9 +53,9 @@ On invocation:
 
 ## Phase 1 — Filings foundation (blocking, single agent)
 
-Spawn `filings-agent` via Task tool. Pass:
+Spawn `filings` via Task tool. Pass:
 - Ticker / name and CIK
-- `${CLAUDE_PLUGIN_ROOT}/agents/filings-agent.md`
+- `${CLAUDE_PLUGIN_ROOT}/agents/filings.md`
 - `${CLAUDE_PLUGIN_ROOT}/references/sec-filing-guide.md`
 - `${CLAUDE_PLUGIN_ROOT}/references/trust-signal-rules.md`
 
@@ -71,7 +71,7 @@ Write `.checkpoint/companies/<slug>/phase-1-filings.json`.
 
 ### Recovery
 
-If filings-agent fails:
+If filings fails:
 1. Check if partial filings were retrieved
 2. Retry with reduced scope (fewer transcripts, skip DEF 14A)
 3. If still fails: mark as partial, continue with warning
@@ -80,21 +80,21 @@ If filings-agent fails:
 
 After filings complete, spawn TWO agents in parallel:
 
-**Agent A: financials-agent**
+**Agent A: financials**
 - Reads filing extracts + narrative.md
 - Writes `research/companies/<slug>/financials.md`
-- Context: `${CLAUDE_PLUGIN_ROOT}/agents/financials-agent.md` + sec-filing-guide
+- Context: `${CLAUDE_PLUGIN_ROOT}/agents/financials.md` + sec-filing-guide
 
-**Agent B: competitive-agent**
+**Agent B: competition**
 - Reads narrative.md + industry context if available
 - Writes `research/companies/<slug>/competitive.md`
-- Context: `${CLAUDE_PLUGIN_ROOT}/agents/competitive-agent.md`
+- Context: `${CLAUDE_PLUGIN_ROOT}/agents/competition.md`
 
 Both run simultaneously. Orchestrator waits for both.
 
 ### Review gate
 
-Spawn `review-agent` for Phase 2 economics + competitive checks (see `${CLAUDE_PLUGIN_ROOT}/agents/review-agent.md`). For company research, "economics" maps to financials.md and "competitive" maps to competitive.md.
+Spawn `reviewer` for Phase 2 economics + competitive checks (see `${CLAUDE_PLUGIN_ROOT}/agents/reviewer.md`). For company research, "economics" maps to financials.md and "competitive" maps to competitive.md.
 
 ### Checkpoint 2
 
@@ -106,9 +106,9 @@ Same as industry Phase 2: retry failed agents once, mark partial if needed.
 
 ## Phase 3 — Synthesis (blocking, single agent)
 
-Spawn `synthesis-agent` via Task tool. Pass:
+Spawn `synthesis` via Task tool. Pass:
 - All completed raw files: `narrative.md`, `financials.md`, `competitive.md`
-- `${CLAUDE_PLUGIN_ROOT}/agents/synthesis-agent.md`
+- `${CLAUDE_PLUGIN_ROOT}/agents/synthesis.md`
 - `${CLAUDE_PLUGIN_ROOT}/references/trust-signal-rules.md`
 
 The agent writes:
@@ -123,7 +123,7 @@ Same as industry Phase 3: falsifiable thesis, ≥5 cited evidence, genuine risks
 
 ### Review gate
 
-Spawn `review-agent` for Phase 3 checks. PASS / CONDITIONAL / FAIL.
+Spawn `reviewer` for Phase 3 checks. PASS / CONDITIONAL / FAIL.
 
 ### Checkpoint 3
 
@@ -131,9 +131,9 @@ Write `.checkpoint/companies/<slug>/phase-3-synthesis.json`.
 
 ## Phase 3.7 — Data extraction (blocking, single agent)
 
-Spawn `data-extraction-agent` via Task tool. Pass:
+Spawn `extractor` via Task tool. Pass:
 - All raw files in `research/companies/<slug>/`
-- `${CLAUDE_PLUGIN_ROOT}/agents/data-extraction-agent.md`
+- `${CLAUDE_PLUGIN_ROOT}/agents/extractor.md`
 - `${CLAUDE_PLUGIN_ROOT}/references/schemas.md`
 
 Writes/appends `data/claims.jsonl`, `data/sources.jsonl`, `data/entities.json`, `data/metrics.jsonl`.
@@ -144,20 +144,20 @@ Write `.checkpoint/companies/<slug>/phase-3.7-data.json`.
 
 ## Phase 4 — Reading generation (blocking, single agent)
 
-Spawn `consume-agent`. The agent reads raw files, designs the artifact, and writes one `reading/<slug>/index.html` (single bilingual file, zero external dependencies, inline SVG charts).
+Spawn `assembler`. The agent reads raw files, designs the artifact, and writes one `reading/<slug>/index.html` (single bilingual file, zero external dependencies, inline SVG charts).
 
 ### Review gate
 
-Spawn `review-agent` for Phase 4 checks (zero CDN, thesis clear, bilingual toggle works, inline SVG renders, numerical consistency).
+Spawn `reviewer` for Phase 4 checks (zero CDN, thesis clear, bilingual toggle works, inline SVG renders, numerical consistency).
 
 ### Phase 4.5 — Verification (blocking, two-stage)
 
 Same two-stage verifier as the industry pipeline (see `skills/industry/SKILL.md` § "Phase 4.5"):
 
 1. **Code stage**: `${CLAUDE_PLUGIN_ROOT}/tools/verify-numerics.sh <slug>` cross-checks every numeric token in the reading HTML against `data/claims.jsonl`. Exit 0 = matched, 1 = unmatched / stale.
-2. **LLM stage**: spawn `${CLAUDE_PLUGIN_ROOT}/agents/logic-verifier-agent.md` for chart-arithmetic, cross-file contradictions, definition drift, inference-chain validity, source-claim spot-checks. Writes `.checkpoint/companies/<slug>/phase-4.5-logic-review.json`.
+2. **LLM stage**: spawn `${CLAUDE_PLUGIN_ROOT}/agents/verifier.md` for chart-arithmetic, cross-file contradictions, definition drift, inference-chain validity, source-claim spot-checks. Writes `.checkpoint/companies/<slug>/phase-4.5-logic-review.json`.
 
-Verdict mapping is the same: PASS / CONDITIONAL / FAIL → if FAIL, regenerate via `consume-agent` Round 2 with the findings list.
+Verdict mapping is the same: PASS / CONDITIONAL / FAIL → if FAIL, regenerate via `assembler` Round 2 with the findings list.
 
 ### Checkpoint 4 (complete)
 

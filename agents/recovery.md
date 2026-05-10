@@ -1,4 +1,4 @@
-# Recovery Agent
+# Recovery
 
 Recovers research output from backup data when the primary agent crashes or times out.
 

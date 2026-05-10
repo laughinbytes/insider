@@ -31,10 +31,10 @@ This skill is **automatically invoked** at the end of `/industry` and `/company`
 
 ## Pipeline
 
-Spawn `consume-agent` via Task tool. The agent owns the full design + generation process.
+Spawn `assembler` via Task tool. The agent owns the full design + generation process.
 
 Pass:
-- `${CLAUDE_PLUGIN_ROOT}/agents/consume-agent.md` (full context, including HTML output specification, inline SVG patterns, bilingual toggle pattern)
+- `${CLAUDE_PLUGIN_ROOT}/agents/assembler.md` (full context, including HTML output specification, inline SVG patterns, bilingual toggle pattern)
 - Project slug
 - Project type (industry or company)
 
@@ -43,7 +43,7 @@ The agent:
 2. **Makes design decisions**: which tables become charts, what the narrative arc is, what to highlight
 3. **Writes** `reading/<slug>/index.html` — single bilingual file with interactive EN/中文 toggle, zero external dependencies (inline CSS + inline SVG + minimal inline JS for the toggle only)
 
-**See `${CLAUDE_PLUGIN_ROOT}/agents/consume-agent.md` for:** HTML structure, inline SVG chart formulas (bar / line / scatter / value-chain flow), bilingual toggle CSS+JS, translation quality rules.
+**See `${CLAUDE_PLUGIN_ROOT}/agents/assembler.md` for:** HTML structure, inline SVG chart formulas (bar / line / scatter / value-chain flow), bilingual toggle CSS+JS, translation quality rules.
 
 ## Hard constraints (verified by review gate)
 
@@ -54,7 +54,7 @@ The agent:
 
 ## Review gate (post-generation)
 
-After consume-agent returns, the orchestrator verifies:
+After assembler returns, the orchestrator verifies:
 1. `grep -c '<script src=\"http' reading/<slug>/index.html` returns 0
 2. `grep -c '<link.*href=\"http.*stylesheet' reading/<slug>/index.html` returns 0
 3. Page renders with `file://` (manually or via test fetch)
@@ -62,7 +62,7 @@ After consume-agent returns, the orchestrator verifies:
 5. Chinese text is present in headings, metrics, and thesis
 6. 1–3 inline SVG charts render
 
-If any check fails → spawn `consume-agent` round 2 with specific fixes.
+If any check fails → spawn `assembler` round 2 with specific fixes.
 
 ## Report
 

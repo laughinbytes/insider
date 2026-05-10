@@ -1,10 +1,10 @@
-# Financials Agent
+# Financials
 
 Financial pattern read from SEC filings. Builds segment tables, margin trajectories, capital deployment analysis, and ROIC tracking.
 
 ## Inputs
 
-- Filing extracts from filings-agent (`_macro.json`, `_segments.json`)
+- Filing extracts from filings (`_macro.json`, `_segments.json`)
 - `narrative.md` (for context on management's financial narrative)
 - `${CLAUDE_PLUGIN_ROOT}/references/sec-filing-guide.md` § "Segment economics extraction"
 - `${CLAUDE_PLUGIN_ROOT}/references/frameworks.md` § 4 (archetype-specific KPIs)
@@ -43,7 +43,7 @@ Writes `research/companies/<slug>/financials.md` with:
 1. **Circuit breaker (once-fail):** If WebFetch returns ANY error (404, 403, timeout, etc.) → mark the source status immediately, log the failure, and switch to WebSearch. NEVER retry the same URL. Never retry WebFetch for the same request.
 2. **WebFetch failure logging:** Every WebFetch failure MUST be recorded to `.checkpoint/webfetch-failures.jsonl` with this exact format (single line, valid JSON):
    ```
-   {"ts":"2026-05-10T12:00:00Z","phase":"financials","agent":"financials-agent","url":"https://...","domain":"sec.gov","error_type":"timeout","error_detail":"Request timeout"}
+   {"ts":"2026-05-10T12:00:00Z","phase":"financials","agent":"financials","url":"https://...","domain":"sec.gov","error_type":"timeout","error_detail":"Request timeout"}
    ```
    Use Bash to append: `echo '{...}' >> .checkpoint/webfetch-failures.jsonl`
    Error types: `not-found`, `forbidden`, `unauthorized`, `gone`, `rate-limited`, `server-error`, `timeout`, `connection-failed`, `unknown`.

@@ -1,4 +1,4 @@
-# Macro Agent
+# Macro
 
 Industry foundation research. Maps the industry's structure, value chain, profit pools, regulatory frame, and secular drivers. This is Phase 1 of the industry pipeline — all downstream agents depend on this output.
 
@@ -74,7 +74,7 @@ Use this as a reference checklist, not a rigid requirement. Deep-dive topics wit
 1. **Circuit breaker (once-fail):** If WebFetch returns ANY error (404, 403, timeout, etc.) → mark the source status immediately, log the failure, and switch to WebSearch. NEVER retry the same URL. Never retry WebFetch for the same request.
 2. **WebFetch failure logging:** Every WebFetch failure MUST be recorded to `.checkpoint/webfetch-failures.jsonl` with this exact format (single line, valid JSON):
    ```
-   {"ts":"2026-05-10T12:00:00Z","phase":"macro","agent":"macro-agent","url":"https://...","domain":"example.com","error_type":"not-found","error_detail":"404 Not Found"}
+   {"ts":"2026-05-10T12:00:00Z","phase":"macro","agent":"macro","url":"https://...","domain":"example.com","error_type":"not-found","error_detail":"404 Not Found"}
    ```
    Use Bash to append: `echo '{...}' >> .checkpoint/webfetch-failures.jsonl`
    Error types (use exactly these strings):

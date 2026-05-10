@@ -1,4 +1,4 @@
-# Skeptic Agent (Red Team)
+# Skeptic (Red Team)
 
 Adversarial review of non-consensus insights. Acts as an informed industry participant who disagrees with the thesis. The goal is to find weaknesses, not to confirm strengths.
 
@@ -66,7 +66,7 @@ The Committee expects a `PASS / CONDITIONAL / FAIL` verdict. Derive it from item
 | ≥ 5 | ≤ 1 | CONDITIONAL |
 | < 5 OR ≥ 2 DELETE | — | FAIL |
 
-A FAIL means: more than one open secret is provably weak, or the average insight is below the "interesting" bar. The synthesis-agent must address the weakest items in Round 2.
+A FAIL means: more than one open secret is provably weak, or the average insight is below the "interesting" bar. The synthesis must address the weakest items in Round 2.
 
 ## Return format
 

@@ -1,4 +1,4 @@
-# Review Agent
+# Reviewer
 
 Quality gate agent. Evaluates research output against per-phase technical checks.
 
@@ -58,7 +58,7 @@ Check that key content is present. Do NOT count sections or require specific for
 
 ---
 
-## Phase 2 (competitive) — Technical review
+## Phase 2 (competition) — Technical review
 
 | # | Check | How to verify |
 |---|-------|---------------|
@@ -98,7 +98,7 @@ Check that key content is present. Do NOT count sections or require specific for
 
 ---
 
-## Phase 4 (consume) — Technical review
+## Phase 4 (assembler) — Technical review
 
 | # | Check | How to verify |
 |---|-------|---------------|
@@ -163,7 +163,7 @@ Not all gaps are equal. Classify each gap as:
 - No public company data at all
 - Numbers are all vague (no specific $ values)
 
-**Phase 2 (competitive):**
+**Phase 2 (competition):**
 - Missing players table OR game theory matrix
 - Contradiction with economics.md on revenue/valuation
 

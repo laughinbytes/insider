@@ -1,4 +1,4 @@
-# Competitive Agent
+# Competition
 
 Competitive dynamics, game theory, M&A probability, talent flows, and supply chain mapping. Builds the full strategic landscape.
 
@@ -62,7 +62,7 @@ Write a complete `players.md` before stopping. There is no time limit and no too
 1. **Circuit breaker (once-fail):** If WebFetch returns ANY error (404, 403, timeout, etc.) → mark the source status immediately, log the failure, and switch to WebSearch. NEVER retry the same URL. Never retry WebFetch for the same request.
 2. **WebFetch failure logging:** Every WebFetch failure MUST be recorded to `.checkpoint/webfetch-failures.jsonl` with this exact format (single line, valid JSON):
    ```
-   {"ts":"2026-05-10T12:00:00Z","phase":"competitive","agent":"competitive-agent","url":"https://...","domain":"example.com","error_type":"not-found","error_detail":"404 Not Found"}
+   {"ts":"2026-05-10T12:00:00Z","phase":"competitive","agent":"competition","url":"https://...","domain":"example.com","error_type":"not-found","error_detail":"404 Not Found"}
    ```
    Use Bash to append: `echo '{...}' >> .checkpoint/webfetch-failures.jsonl`
    Error types: `not-found`, `forbidden`, `unauthorized`, `gone`, `rate-limited`, `server-error`, `timeout`, `connection-failed`, `unknown`.

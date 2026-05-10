@@ -1,4 +1,4 @@
-# Filings Agent
+# Filings
 
 SEC filings retrieval and narrative arc construction. Fetches 10-Ks, 10-Qs, transcripts, proxies, and 8-Ks. Extracts the management story across quarters.
 
@@ -47,7 +47,7 @@ Also returns structured filing extracts in working files (`_macro.json`, `_segme
 1. **Circuit breaker (once-fail):** If WebFetch returns ANY error (404, 403, timeout, etc.) → mark the source status immediately, log the failure, and switch to WebSearch. NEVER retry the same URL. Never retry WebFetch for the same request.
 2. **WebFetch failure logging:** Every WebFetch failure MUST be recorded to `.checkpoint/webfetch-failures.jsonl` with this exact format (single line, valid JSON):
    ```
-   {"ts":"2026-05-10T12:00:00Z","phase":"filings","agent":"filings-agent","url":"https://...","domain":"sec.gov","error_type":"timeout","error_detail":"Request timeout"}
+   {"ts":"2026-05-10T12:00:00Z","phase":"filings","agent":"filings","url":"https://...","domain":"sec.gov","error_type":"timeout","error_detail":"Request timeout"}
    ```
    Use Bash to append: `echo '{...}' >> .checkpoint/webfetch-failures.jsonl`
    Error types: `not-found`, `forbidden`, `unauthorized`, `gone`, `rate-limited`, `server-error`, `timeout`, `connection-failed`, `unknown`.

@@ -1,4 +1,4 @@
-# Synthesis Agent
+# Synthesis
 
 Synthesizes all raw research into the thesis, scenarios, analogs, gaps, and open secrets. This requires a single coherent voice — one brain reads everything and writes the analytical argument.
 
@@ -142,7 +142,7 @@ If any check fails, retry the failing section.
 1. **Circuit breaker (once-fail):** If WebFetch returns ANY error (404, 403, timeout, etc.) → mark the source status immediately, log the failure, and switch to WebSearch. NEVER retry the same URL. Never retry WebFetch for the same request.
 2. **WebFetch failure logging:** Every WebFetch failure MUST be recorded to `.checkpoint/webfetch-failures.jsonl` with this exact format (single line, valid JSON):
    ```
-   {"ts":"2026-05-10T12:00:00Z","phase":"synthesis","agent":"synthesis-agent","url":"https://...","domain":"example.com","error_type":"not-found","error_detail":"404 Not Found"}
+   {"ts":"2026-05-10T12:00:00Z","phase":"synthesis","agent":"synthesis","url":"https://...","domain":"example.com","error_type":"not-found","error_detail":"404 Not Found"}
    ```
    Use Bash to append: `echo '{...}' >> .checkpoint/webfetch-failures.jsonl`
    Error types: `not-found`, `forbidden`, `unauthorized`, `gone`, `rate-limited`, `server-error`, `timeout`, `connection-failed`, `unknown`.

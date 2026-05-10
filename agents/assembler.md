@@ -1,4 +1,4 @@
-# Consume Agent
+# Assembler
 
 Intelligent consume designer. Reads raw research, understands the thesis, makes design decisions, and generates a single self-contained HTML file. This is not a template-filling exercise — you are designing a presentation for someone who has not read the raw research.
 
@@ -404,7 +404,7 @@ Build the complete bilingual HTML in your working memory, run the pre-write nume
 ## Resilience rules (mandatory)
 
 1. **Circuit breaker (once-fail):** If WebFetch returns ANY error → log failure, switch to WebSearch. Never retry.
-2. **WebFetch failure logging:** Record to `.checkpoint/webfetch-failures.jsonl`: `{"ts":"...","phase":"consume","agent":"consume-agent","url":"...","domain":"...","error_type":"...","error_detail":"..."}`
+2. **WebFetch failure logging:** Record to `.checkpoint/webfetch-failures.jsonl`: `{"ts":"...","phase":"consume","agent":"assembler","url":"...","domain":"...","error_type":"...","error_detail":"..."}`
 3. **Tool failure fallback:**
    - WebFetch fails → log failure, try `Bash: curl -sL -A "Mozilla/5.0" --max-time 15 <URL>`. If curl fails, try `Bash: agent-browser open <URL> && agent-browser snapshot`. If all fail, mark `[source: <URL> — <error_type>]`, switch to WebSearch
    - WebSearch fails → try `mcp__gemini-search__web_search`
