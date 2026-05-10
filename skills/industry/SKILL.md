@@ -69,7 +69,7 @@ The search-backup `PostToolUse` hook is shipped as `${CLAUDE_PLUGIN_ROOT}/hooks/
 
 | Rule | Trigger | Action |
 |------|---------|--------|
-| **Circuit breaker** | Same URL returns any error once | Mark `[dead]`, log failure, switch to WebSearch |
+| **Circuit breaker** | Same URL returns any error once | Mark `[dead]`, log failure, switch to next search tool per `.insider/search-priority.json` |
 | **Marginal-insight stop** | Agent's last 3 fetches produced nothing new | Agent writes current state and stops |
 | **Review gate** | Phase 1/2/3 complete | Spawn reviewer to check coverage, gaps, contradictions |
 | **Hooks backup** | Every search tool call | PostToolUse hook auto-saves query+result to `.checkpoint/search-backup.jsonl` |
@@ -389,7 +389,7 @@ When an agent crashes, spawn `recovery`:
 | Review Round 2 FAIL (critical gap remains) | ABORT → user report |
 | All parallel agents fail | Mark both partial → continue with synthesis |
 | Web search API error | Wait 5s → retry with reformulated query |
-| Source returns any error (once) | Log to `.checkpoint/webfetch-failures.jsonl` → mark `[dead]` → switch to WebSearch |
+| Source returns any error (once) | Log to `.checkpoint/webfetch-failures.jsonl` → mark `[dead]` → switch to next search tool per `.insider/search-priority.json` |
 | Socket disconnect | Resume from checkpoint on next invocation |
 | Disk write fails | Report error → skip checkpoint → continue |
 | Consume CDN unavailable | Not possible — zero external dependencies |

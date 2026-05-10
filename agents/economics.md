@@ -46,11 +46,11 @@ Write a complete `economics.md` before stopping. There is no time limit and no t
 
 ## Tool usage guidance
 
-1. **Search tool priority (flexible fallback):**
-   - **Primary:** `WebSearch` — for general research and discovery
-   - **Fallback A:** `mcp__gemini-search__web_search` — when WebSearch is unavailable or returns insufficient results
-   - **Fallback B:** `Bash` with `gemini search` or `curl` — when both native search tools fail
-   - **Last resort:** `WebFetch` — for specific URLs only (sec.gov, stockanalysis.com, company investor pages)
+1. **Adaptive search tool priority:**
+   - At the start of your session, Read `.insider/search-priority.json` to discover your configured tool order.
+   - Use search tools in the order specified by the `priority` array.
+   - If the config is missing, default order is: `WebSearch` → `mcp__gemini-search__web_search` (if available) → Bash (`gemini search`, `curl`).
+   - `WebFetch` is NEVER a primary search tool — only use it for specific URLs from the whitelist in `references/data-sources.md` § WebFetch domain whitelist.
 
 2. **Bash usage guidance:**
    - **Preferred:** File operations, data processing (`jq`, `python3`), project tools
@@ -58,7 +58,7 @@ Write a complete `economics.md` before stopping. There is no time limit and no t
 
 ## Resilience rules (mandatory)
 
-1. **Circuit breaker (once-fail):** If WebFetch returns ANY error (404, 403, timeout, etc.) → mark the source status immediately, log the failure, and switch to WebSearch. NEVER retry the same URL. Never retry WebFetch for the same request.
+1. **Circuit breaker (once-fail):** If WebFetch returns ANY error (404, 403, timeout, etc.) → mark the source status immediately, log the failure, and switch to the next search tool per `.insider/search-priority.json`. NEVER retry the same URL. Never retry WebFetch for the same request.
 2. **WebFetch failure logging:** Every WebFetch failure MUST be recorded to `.checkpoint/webfetch-failures.jsonl` with this exact format (single line, valid JSON):
    ```
    {"ts":"2026-05-10T12:00:00Z","phase":"economics","agent":"economics","url":"https://...","domain":"example.com","error_type":"not-found","error_detail":"404 Not Found"}
@@ -66,11 +66,11 @@ Write a complete `economics.md` before stopping. There is no time limit and no t
    Use Bash to append: `echo '{...}' >> .checkpoint/webfetch-failures.jsonl`
    Error types: `not-found`, `forbidden`, `unauthorized`, `gone`, `rate-limited`, `server-error`, `timeout`, `connection-failed`, `unknown`.
 3. **Tool failure fallback:** If a tool fails, follow this order — do not retry the same tool:
-   - WebSearch fails → try `mcp__gemini-search__web_search`
-   - `mcp__gemini-search__web_search` fails (503/timeout) → try WebSearch with reformulated query
-   - Both search tools fail → try Bash with `gemini search` as last resort
+   - A search tool fails → try the next tool in the `priority` array (read from `.insider/search-priority.json`)
+   - All configured search tools fail → try Bash with `gemini search` or `curl` as last resort
+   - If a tool returns 503/timeout, try the next tool in the array with the same query (reformulate if needed)
    - All search fails → mark source `[unreachable]`, skip, move on
-   - WebFetch fails → log failure, try `Bash: curl -sL -A "Mozilla/5.0" --max-time 15 <URL>`. If curl fails, try `Bash: agent-browser open <URL> && agent-browser snapshot`. If all fail, mark source `[source: <URL> — <error_type>]`, switch to WebSearch
+   - WebFetch fails → log failure, try `Bash: curl -sL -A "Mozilla/5.0" --max-time 15 <URL>`. If curl fails, try `Bash: agent-browser open <URL> && agent-browser snapshot`. If all fail, mark source `[source: <URL> — <error_type>]`, switch to the next search tool per `.insider/search-priority.json`
    - Bash permission denied → use Read/Write on known paths only
 4. **Quality over speed:** Research until marginal insight drops. Write the complete output file before stopping.
 

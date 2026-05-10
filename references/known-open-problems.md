@@ -52,19 +52,21 @@ These are not bugs to fix in the next release. They are open research problems. 
 
 **Current mitigation:**
 - **Do NOT bundle `.claude/mcp.json`** in the plugin — avoids collision entirely at the cost of requiring manual user setup
-- `tools/setup.sh` checks for Gemini CLI availability and warns (does not fail) if missing, with install instructions
-- `references/data-sources.md` marks `mcp__gemini-search__web_search` as priority 2 **(optional / recommended)** — agents fall back through the full chain even without it
-- If the tool is unavailable at runtime, Claude Code will prompt for permission once; if denied, the orchestrator reports it and the agent continues with WebSearch + WebFetch + Bash fallback
+- **`tools/setup.sh` auto-detects** Gemini CLI availability and generates `.insider/search-priority.json` — if gemini is present, it ranks first; otherwise WebSearch ranks first. Agents read this config at session start and follow the `priority` array
+- All agent specs use **adaptive tool priority** — no hardcoded "WebSearch primary, gemini fallback" anywhere in the plugin. Every "switch to WebSearch" in circuit-breaker rules has been replaced with "switch to next search tool per `.insider/search-priority.json`"
+- `references/data-sources.md` documents the adaptive tier system — Tier 1 and Tier 2 are filled dynamically from the user's config
+- If the tool is unavailable at runtime, Claude Code will prompt for permission once; if denied, the orchestrator reports it and the agent continues with the next tool in the priority array + WebFetch + Bash fallback
 
 **Residual risk:**
-- Users who don't install Gemini CLI lose one tier of search resilience
+- Users who don't install Gemini CLI lose one tier of search resilience (their config only contains `WebSearch`)
 - The plugin's hook (`hooks/hooks.json`) still references `mcp__gemini-search__web_search` in its matcher — if the tool is never invoked, the hook simply never fires for it (harmless)
+- Agent spec compliance: an agent could theoretically ignore the "Read `.insider/search-priority.json`" instruction and fall back to hardcoded behavior. This is a spec-enforcement problem, not a config problem
 - If a future Claude Code version changes MCP resolution semantics, this assessment may need revisiting
 
 **Open research direction:**
 - Wait for Claude Code to document stable MCP server namespacing / scoping rules for plugins
 - Or: lobby for plugin-declared "recommended tools" that prompt the user to install without bundling config files
-- Or: implement a runtime capability probe that detects whether `mcp__gemini-search__web_search` is available before routing to it, rather than relying on static fallback chains
+- ~~Runtime capability probe~~ — **Addressed via `.insider/search-priority.json`**. Future improvement: make the probe dynamic (check at runtime whether `mcp__gemini-search__web_search` responds, not just whether the CLI binary exists)
 
 ---
 

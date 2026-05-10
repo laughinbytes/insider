@@ -66,7 +66,7 @@ Flag any contradictions found across projects.
 
 ### Phase 4 — New developments scan
 
-WebSearch (fallback: `mcp__gemini-search__web_search`) for what's changed since `generated_at`:
+Use search tools in the order specified by `.insider/search-priority.json` (run `./tools/setup.sh` to generate) for what's changed since `generated_at`:
 
 Query patterns:
 - `"<industry keyword>" "earnings" OR "announcement" after:YYYY-MM-DD`

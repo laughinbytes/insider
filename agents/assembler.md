@@ -403,12 +403,12 @@ Build the complete bilingual HTML in your working memory, run the pre-write nume
 
 ## Resilience rules (mandatory)
 
-1. **Circuit breaker (once-fail):** If WebFetch returns ANY error → log failure, switch to WebSearch. Never retry.
+1. **Circuit breaker (once-fail):** If WebFetch returns ANY error → log failure, switch to the next search tool per `.insider/search-priority.json`. Never retry.
 2. **WebFetch failure logging:** Record to `.checkpoint/webfetch-failures.jsonl`: `{"ts":"...","phase":"consume","agent":"assembler","url":"...","domain":"...","error_type":"...","error_detail":"..."}`
 3. **Tool failure fallback:**
-   - WebFetch fails → log failure, try `Bash: curl -sL -A "Mozilla/5.0" --max-time 15 <URL>`. If curl fails, try `Bash: agent-browser open <URL> && agent-browser snapshot`. If all fail, mark `[source: <URL> — <error_type>]`, switch to WebSearch
-   - WebSearch fails → try `mcp__gemini-search__web_search`
-   - All search fails → skip, move on
+   - WebFetch fails → log failure, try `Bash: curl -sL -A "Mozilla/5.0" --max-time 15 <URL>`. If curl fails, try `Bash: agent-browser open <URL> && agent-browser snapshot`. If all fail, mark `[source: <URL> — <error_type>]`, switch to the next search tool per `.insider/search-priority.json`
+   - A search tool fails → try the next tool in the `priority` array (read from `.insider/search-priority.json`)
+   - All configured search tools fail → skip, move on
    - Bash permission denied → use Read/Write only
 4. **If calls run low:** Prioritize — hero section + thesis + 1 chart + players table. Exclude scenarios, risks, open secrets if necessary. A thin but coherent page beats a broken comprehensive one.
 5. **Quality over speed:** Take time to produce correct inline SVG. A page with 2 working charts beats a page with 4 broken ones.

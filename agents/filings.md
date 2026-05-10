@@ -32,11 +32,11 @@ Also returns structured filing extracts in working files (`_macro.json`, `_segme
 
 ## Tool usage guidance
 
-1. **Search tool priority (flexible fallback):**
+1. **Adaptive search tool priority:**
+   - At the start of your session, Read `.insider/search-priority.json` to discover your configured search tool order.
    - **Primary:** `WebFetch` — for SEC EDGAR, company IR pages (known-reliable domains)
-   - **Secondary:** `WebSearch` — for finding transcript sources, earnings dates
-   - **Fallback A:** `mcp__gemini-search__web_search` — when other tools fail
-   - **Fallback B:** `Bash` with `gemini search` or `curl` — when all native tools fail
+   - **Secondary (adaptive):** Use search tools in the order specified by the `priority` array (`WebSearch` or `mcp__gemini-search__web_search` first, depending on your config).
+   - **Fallback:** `Bash` with `gemini search` or `curl` — when all native tools fail
 
 2. **Bash usage guidance:**
    - **Preferred:** File operations, data processing
@@ -44,7 +44,7 @@ Also returns structured filing extracts in working files (`_macro.json`, `_segme
 
 ## Resilience rules (mandatory)
 
-1. **Circuit breaker (once-fail):** If WebFetch returns ANY error (404, 403, timeout, etc.) → mark the source status immediately, log the failure, and switch to WebSearch. NEVER retry the same URL. Never retry WebFetch for the same request.
+1. **Circuit breaker (once-fail):** If WebFetch returns ANY error (404, 403, timeout, etc.) → mark the source status immediately, log the failure, and switch to the next search tool per `.insider/search-priority.json`. NEVER retry the same URL. Never retry WebFetch for the same request.
 2. **WebFetch failure logging:** Every WebFetch failure MUST be recorded to `.checkpoint/webfetch-failures.jsonl` with this exact format (single line, valid JSON):
    ```
    {"ts":"2026-05-10T12:00:00Z","phase":"filings","agent":"filings","url":"https://...","domain":"sec.gov","error_type":"timeout","error_detail":"Request timeout"}
@@ -52,9 +52,9 @@ Also returns structured filing extracts in working files (`_macro.json`, `_segme
    Use Bash to append: `echo '{...}' >> .checkpoint/webfetch-failures.jsonl`
    Error types: `not-found`, `forbidden`, `unauthorized`, `gone`, `rate-limited`, `server-error`, `timeout`, `connection-failed`, `unknown`.
 3. **Tool failure fallback:** If a tool fails, follow this order — do not retry the same tool:
-   - WebFetch fails → try `Bash: curl -sL -A "Mozilla/5.0" --max-time 15 <URL>`. If curl fails, try `Bash: agent-browser open <URL> && agent-browser snapshot`. If all fail, try WebSearch
-   - WebSearch fails → try `mcp__gemini-search__web_search`
-   - `mcp__gemini-search__web_search` fails → try Bash with `gemini search` as last resort
+   - WebFetch fails → try `Bash: curl -sL -A "Mozilla/5.0" --max-time 15 <URL>`. If curl fails, try `Bash: agent-browser open <URL> && agent-browser snapshot`. If all fail, try the next search tool in the `priority` array
+   - A search tool fails → try the next tool in the `priority` array (read from `.insider/search-priority.json`)
+   - All configured search tools fail → try Bash with `gemini search` as last resort
    - All fail → mark source `[unreachable]`, skip, move on
    - Bash permission denied → use Read/Write on known paths only
 4. **Quality over speed:** Fetch thoroughly, but persist frequently.
