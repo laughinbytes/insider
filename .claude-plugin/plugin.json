@@ -4,8 +4,8 @@
   "version": "0.2.0",
   "description": "Deep-dive industry and company analysis with structured data layer. VC / equity-research-grade breakdowns with claims database, entity tracking, and source health monitoring.",
   "author": { "name": "Chuang" },
-  "homepage": "",
-  "repository": "",
+  "homepage": "https://github.com/laughinbytes/insider",
+  "repository": "https://github.com/laughinbytes/insider",
   "license": "MIT",
   "keywords": [
     "research",
