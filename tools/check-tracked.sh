@@ -2,7 +2,9 @@
 # check-tracked.sh — verify that every expected plugin asset is git-tracked.
 #
 # Catches the failure mode where an unanchored .gitignore pattern silently
-# excludes a plugin asset (e.g., `consume/` matching `skills/consume/`).
+# excludes a plugin asset. Historical example that motivated this guard:
+# a `consume/` rule (the old name for `reading/`) silently matched
+# `skills/consume/SKILL.md` and excluded it from the initial commit.
 # Run before committing or releasing.
 
 set -e

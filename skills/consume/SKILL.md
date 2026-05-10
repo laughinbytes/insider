@@ -1,6 +1,6 @@
 ---
 name: consume
-description: Generate a human-consumable HTML artifact from existing raw research. Intelligent design focused on reading comprehension — clear narrative flow, scannable structure, and insightful visualizations. Single bilingual file with EN/中文 toggle, zero external dependencies. Use when the user runs /consume or wants to regenerate the consume layer.
+description: Generate a human-consumable HTML artifact from existing raw research. Intelligent design focused on reading comprehension — clear narrative flow, scannable structure, and insightful visualizations. Single bilingual file with EN/中文 toggle, zero external dependencies. Use when the user runs /consume or wants to regenerate the reading layer.
 argument-hint: <slug> [--type industry|company]
 allowed-tools: [Read, Write, Bash, Glob, Task]
 ---
@@ -9,7 +9,7 @@ allowed-tools: [Read, Write, Bash, Glob, Task]
 
 Generate a human-consumable HTML artifact from existing raw research. This is an **intelligent design process** — the agent reads the raw files, understands the thesis and evidence, then designs the artifact for **reading comprehension**.
 
-**Principle:** The consume layer is for reading, not playing. No sliders, no drag-and-drop, no live recalculation. The reader should understand the thesis and key evidence in 5 minutes.
+**Principle:** The reading layer is for reading, not playing. No sliders, no drag-and-drop, no live recalculation. The reader should understand the thesis and key evidence in 5 minutes.
 
 ## Automatic invocation
 
@@ -41,7 +41,7 @@ Pass:
 The agent:
 1. **Selectively reads** raw files (thesis.md first, then 3-5 more based on what the thesis needs)
 2. **Makes design decisions**: which tables become charts, what the narrative arc is, what to highlight
-3. **Writes** `consume/<slug>/index.html` — single bilingual file with interactive EN/中文 toggle, zero external dependencies (inline CSS + inline SVG + minimal inline JS for the toggle only)
+3. **Writes** `reading/<slug>/index.html` — single bilingual file with interactive EN/中文 toggle, zero external dependencies (inline CSS + inline SVG + minimal inline JS for the toggle only)
 
 **See `${CLAUDE_PLUGIN_ROOT}/agents/consume-agent.md` for:** HTML structure, inline SVG chart formulas (bar / line / scatter / value-chain flow), bilingual toggle CSS+JS, translation quality rules.
 
@@ -55,8 +55,8 @@ The agent:
 ## Review gate (post-generation)
 
 After consume-agent returns, the orchestrator verifies:
-1. `grep -c '<script src=\"http' consume/<slug>/index.html` returns 0
-2. `grep -c '<link.*href=\"http.*stylesheet' consume/<slug>/index.html` returns 0
+1. `grep -c '<script src=\"http' reading/<slug>/index.html` returns 0
+2. `grep -c '<link.*href=\"http.*stylesheet' reading/<slug>/index.html` returns 0
 3. Page renders with `file://` (manually or via test fetch)
 4. Thesis is clear in the hero section
 5. Chinese text is present in headings, metrics, and thesis
@@ -67,7 +67,7 @@ If any check fails → spawn `consume-agent` round 2 with specific fixes.
 ## Report
 
 After successful generation:
-> Consume artifact generated: `consume/<slug>/index.html`
+> Reading artifact generated: `reading/<slug>/index.html`
 > Inline SVG charts: N
 > Sections: M
 > Bilingual: EN + 中文 (CSS toggle)

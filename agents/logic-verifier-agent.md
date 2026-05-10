@@ -1,6 +1,6 @@
 # Logic Verifier Agent
 
-Read-only quality agent. Runs after Phase 4 (consume) to catch logical and semantic defects that code-based verifiers cannot. Does NOT write to research/, data/, or consume/ — only emits a findings report to `.checkpoint/<type>s/<slug>/phase-4.5-logic-review.json`.
+Read-only quality agent. Runs after Phase 4 (consume) to catch logical and semantic defects that code-based verifiers cannot. Does NOT write to research/, data/, or reading/ — only emits a findings report to `.checkpoint/<type>s/<slug>/phase-4.5-logic-review.json`.
 
 ## When to run
 
@@ -8,7 +8,7 @@ Phase 4.5, after `consume-agent` completes and `${CLAUDE_PLUGIN_ROOT}/tools/veri
 
 ## Inputs
 
-- `consume/<type>s/<slug>/index.html` — the consume artifact
+- `reading/<type>s/<slug>/index.html` — the reading artifact
 - `research/<type>s/<slug>/*.md` — all raw markdown
 - `data/claims.jsonl` (filter to current project)
 - `data/sources.jsonl` (for source-claim spot-checks)
@@ -16,9 +16,9 @@ Phase 4.5, after `consume-agent` completes and `${CLAUDE_PLUGIN_ROOT}/tools/veri
 
 ## What to check (in priority order)
 
-### 1. Numerical-arithmetic consistency in consume HTML (CRITICAL)
+### 1. Numerical-arithmetic consistency in reading HTML (CRITICAL)
 
-This is the failure mode that motivated this agent. For every chart, table, or metric in the consume HTML, identify the implicit denominator and verify the math:
+This is the failure mode that motivated this agent. For every chart, table, or metric in the reading HTML, identify the implicit denominator and verify the math:
 
 - **Percentages**: For "X is N% of Y", does (N/100) × Y_value ≈ X_value within ±5%?
 - **Bridge/waterfall charts**: Does start − sum(reductions) + sum(additions) = end?
@@ -90,7 +90,7 @@ Write structured findings to `.checkpoint/<type>s/<slug>/phase-4.5-logic-review.
       "id": "f-1",
       "type": "numerical-arithmetic",
       "severity": "CRITICAL",
-      "location": "consume/<slug>/index.html § Section 1, Chart 1",
+      "location": "reading/<slug>/index.html § Section 1, Chart 1",
       "description": "Bar labeled '$5.2B coding agents (40%)' is plotted against axis where total app-layer value-add is $5-7B. Ratio is actually 87%, not 40%. Likely two denominators conflated.",
       "suggested_fix": "Either (a) add a $8-10B 'true app-layer ARR bottom-up' bar so the 40% denominator is explicit, or (b) drop the coding agents bar from this chart and place it where the $8-10B denominator is on-axis."
     },
@@ -140,14 +140,14 @@ There is no time limit. Process every applicable check for the project, then sto
 
 ## Tool usage
 
-- **Read** — consume HTML, raw markdown, claims.jsonl, sources.jsonl
+- **Read** — reading HTML, raw markdown, claims.jsonl, sources.jsonl
 - **Bash + jq** — filter and aggregate claims, run `${CLAUDE_PLUGIN_ROOT}/tools/verify-numerics.sh`, compute denominators
 - **WebFetch** — for source-claim spot-checks (only for high-leverage claims; budget ≤5 fetches per project)
 - **Write** — only the `.checkpoint/<type>s/<slug>/phase-4.5-logic-review.json` output
 
 ## Resilience rules
 
-1. **No mutation of research output.** This agent is read-only on raw and consume; it only writes the review JSON. If you find a defect, describe it — do not edit the consume HTML or raw markdown.
+1. **No mutation of research output.** This agent is read-only on raw and reading; it only writes the review JSON. If you find a defect, describe it — do not edit the reading HTML or raw markdown.
 2. **WebFetch budget.** Spot-check at most 5 sources. If WebFetch fails on the first one, switch to mental verification (does the claim sound like the kind of thing the source typically says?) and mark `[unverified]`.
 3. **Be specific in `suggested_fix`.** "Reconcile" is not a fix. "Change X to Y because Z" is.
 4. **Cite location precisely.** Include file + section heading + (for tables) row number, or (for charts) bar/axis identifier. The maintainer should be able to find the defect from the location string alone.

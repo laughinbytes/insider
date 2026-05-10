@@ -2,11 +2,11 @@
 #
 # verify-numerics.sh <slug> [--json]
 #
-# Cross-checks numeric content in `consume/<slug>/index.html` against
+# Cross-checks numeric content in `reading/<slug>/index.html` against
 # `data/claims.jsonl`.
 #
 # Two modes:
-#   1. Structured (preferred): if `consume/<slug>/numerics.json` exists,
+#   1. Structured (preferred): if `reading/<slug>/numerics.json` exists,
 #      validate every declared annotation against its `claim_ids[]` and
 #      do arithmetic checks for ratio/range types. Clean output, no noise.
 #   2. Regex fallback: if numerics.json is absent, extract numeric tokens
@@ -28,9 +28,9 @@ for arg in "${@:2}"; do
 done
 
 ROOT="${INSIDER_PROJECT_ROOT:-$(pwd)}"
-HTML_FILE="$ROOT/consume/$SLUG/index.html"
+HTML_FILE="$ROOT/reading/$SLUG/index.html"
 CLAIMS_FILE="$ROOT/data/claims.jsonl"
-NUMERICS_FILE="$ROOT/consume/$SLUG/numerics.json"
+NUMERICS_FILE="$ROOT/reading/$SLUG/numerics.json"
 
 [[ -f "$HTML_FILE" ]] || { echo "ERROR: $HTML_FILE not found" >&2; exit 2; }
 [[ -f "$CLAIMS_FILE" ]] || { echo "ERROR: $CLAIMS_FILE not found" >&2; exit 2; }

@@ -5,7 +5,7 @@ Deep-dive industry and company analysis using parallel specialized agents with c
 ## Architecture
 
 ```
-Raw layer (markdown)              Data layer (jsonl)         Consume layer (HTML)
+Raw layer (markdown)              Data layer (jsonl)         Reading layer (HTML)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 /industry <industry>
@@ -25,7 +25,7 @@ Phase 4: consume-agent            (blocking)   ← single HTML file, inline SVG,
   ↓
 Phase 4.5: verify-numerics + logic-verifier-agent  (blocking, two-stage)
   ↓
-research/ + data/ + consume/
+research/ + data/ + reading/
 ```
 
 **No fixed time limits.** Agents cannot reliably perceive wall-clock time or tool-call counts. Stopping is driven by marginal insight per source — when the next 3 fetches return nothing new, the agent writes its output and stops.
@@ -42,7 +42,7 @@ research/ + data/ + consume/
 |---------|----------|
 | `/industry <industry>` | Decode a sector |
 | `/company <ticker>` | Diligence a specific company |
-| `/consume <slug>` | Regenerate consume from existing raw |
+| `/consume <slug>` | Regenerate the reading from existing raw |
 | `/lens <slug> <stakeholder>` | Stakeholder-filtered prep doc |
 | `/audit <slug>` | Freshness check using data layer |
 
@@ -69,7 +69,7 @@ research/ + data/ + consume/
 | 3 | synthesis-agent | thesis.md, scenarios.md, analogs.md, gaps.md, open-secrets.md, sources.md | No |
 | 3.5 | investor-agent + expert-agent + skeptic-agent | committee vote (no file) | Yes |
 | 3.7 | data-extraction-agent | claims.jsonl, sources.jsonl, entities.json, metrics.jsonl (append/merge) | No |
-| 4 | consume-agent | consume/<slug>/index.html | No |
+| 4 | consume-agent | reading/<slug>/index.html | No |
 | 4.5 | verify-numerics.sh + logic-verifier-agent | phase-4.5-logic-review.json | No |
 
 ### Company research (6 phases)
@@ -81,7 +81,7 @@ research/ + data/ + consume/
 | 2 | competitive-agent | competitive.md | Yes |
 | 3 | synthesis-agent | thesis.md, scenarios.md, gaps.md, sources.md | No |
 | 3.7 | data-extraction-agent | data layer jsonl | No |
-| 4 | consume-agent | consume/<slug>/index.html | No |
+| 4 | consume-agent | reading/<slug>/index.html | No |
 | 4.5 | verify-numerics.sh + logic-verifier-agent | phase-4.5-logic-review.json | No |
 
 ## Permissions
@@ -146,7 +146,7 @@ data/                              # Structured data layer (cross-project, appen
 ├── sources.jsonl
 └── metrics.jsonl
 
-consume/                           # Human-consumable HTML (one file per slug)
+reading/                           # Human-consumable HTML (one file per slug)
 └── <slug>/
     └── index.html
 
@@ -191,7 +191,7 @@ Mitigations are layered (anti-amorphous-label rule, transition constituent decom
 
 ## Consumption
 
-- **Primary**: Open `consume/<slug>/index.html` in any browser (single file, EN/中文 toggle, zero deps)
+- **Primary**: Open `reading/<slug>/index.html` in any browser (single file, EN/中文 toggle, zero deps)
 - **Deep dive**: Open `research/` folder as Obsidian vault
 - **Query**: Use `./tools/query.sh` for cross-research search
 

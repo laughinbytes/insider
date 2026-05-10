@@ -1,5 +1,5 @@
 #!/bin/bash
-# Open consume HTML in default browser
+# Open reading HTML in default browser
 # Usage: ./tools/open.sh <slug>
 
 set -e
@@ -13,14 +13,14 @@ if [ -z "$SLUG" ]; then
 fi
 
 ROOT="${INSIDER_PROJECT_ROOT:-$(pwd)}"
-HTML_FILE="$ROOT/consume/${SLUG}/index.html"
+HTML_FILE="$ROOT/reading/${SLUG}/index.html"
 
 if [ ! -f "$HTML_FILE" ]; then
-  echo "No consume HTML found for: ${SLUG}"
+  echo "No reading HTML found for: ${SLUG}"
   echo "Expected: ${HTML_FILE}"
   echo ""
   echo "Available slugs:"
-  ls -1 "$ROOT/consume/" 2>/dev/null || echo "  (none)"
+  ls -1 "$ROOT/reading/" 2>/dev/null || echo "  (none)"
   exit 1
 fi
 

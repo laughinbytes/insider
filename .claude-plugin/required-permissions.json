@@ -14,7 +14,7 @@
         "tool": "Write",
         "scope": "all",
         "required_by": ["macro", "economics", "competitive", "synthesis", "consume"],
-        "reason": "Agents write research output, checkpoints, and consume artifacts"
+        "reason": "Agents write research output, checkpoints, and reading artifacts"
       },
       {
         "tool": "Edit",

@@ -4,7 +4,7 @@ Intelligent consume designer. Reads raw research, understands the thesis, makes 
 
 ## Stopping rule
 
-Write `consume/<slug>/index.html` — single bilingual file with interactive language toggle. There is no time limit and no tool-call cap. Stop when the page conveys the thesis + key evidence + scenarios + risks; further additions become decoration.
+Write `reading/<slug>/index.html` — single bilingual file with interactive language toggle. There is no time limit and no tool-call cap. Stop when the page conveys the thesis + key evidence + scenarios + risks; further additions become decoration.
 
 ## Goal
 
@@ -77,7 +77,7 @@ If you cannot decompose a transition into named constituents, you do NOT have en
 
 1. **Zero external dependencies** — Renders fully with `file://` (no CDN, no external scripts)
 2. **Interactive language toggle works** — EN/中文 switcher functions correctly
-3. **Single file only** — Write exactly one `consume/<slug>/index.html`. **Do NOT create `index.zh.html` or any companion file.** Both languages live in the same file behind a CSS toggle.
+3. **Single file only** — Write exactly one `reading/<slug>/index.html`. **Do NOT create `index.zh.html` or any companion file.** Both languages live in the same file behind a CSS toggle.
 4. **Numerical consistency** — Every figure, percentage, and ratio in a chart, table, or hero metric uses an explicit denominator. Two numbers shown on the same axis or compared visually must share units and reference base. A page that mixes denominators silently (e.g., "$X is 40% of Y" while plotting against a different total Z) is a defect.
 
 ## Pre-write numerical self-check (mandatory before `Write`)
@@ -394,8 +394,8 @@ Good:
 
 Write **two** files:
 
-1. `consume/<slug>/index.html` — the bilingual single-file page.
-2. `consume/<slug>/numerics.json` — structured manifest covering **100% of numeric tokens** in the page (hero metrics, every chart bar, every table cell, every open-secret figure, every scenario percentage and range, every footer count, every callout figure). Schema lives in `${CLAUDE_PLUGIN_ROOT}/references/schemas.md` § "consume/<slug>/numerics.json". No exceptions: if a number appears in the HTML, it must appear in numerics.json with a resolvable `claim_ids[]` or with `"derived": true` and explicit context. The verifier coverage check is strict — uncovered tokens trigger MAJOR gaps in Phase 4 review.
+1. `reading/<slug>/index.html` — the bilingual single-file page.
+2. `reading/<slug>/numerics.json` — structured manifest covering **100% of numeric tokens** in the page (hero metrics, every chart bar, every table cell, every open-secret figure, every scenario percentage and range, every footer count, every callout figure). Schema lives in `${CLAUDE_PLUGIN_ROOT}/references/schemas.md` § "reading/<slug>/numerics.json". No exceptions: if a number appears in the HTML, it must appear in numerics.json with a resolvable `claim_ids[]` or with `"derived": true` and explicit context. The verifier coverage check is strict — uncovered tokens trigger MAJOR gaps in Phase 4 review.
 
 Build the complete bilingual HTML in your working memory, run the pre-write numerical self-check (above), enumerate every numeric token, then write both files in two `Write` calls. After writing, run `${CLAUDE_PLUGIN_ROOT}/tools/verify-numerics.sh <slug>` and confirm exit code 0 before returning.
 
@@ -416,7 +416,7 @@ Build the complete bilingual HTML in your working memory, run the pre-write nume
 ```json
 {
   "status": "completed",
-  "file": "consume/<slug>/index.html",
+  "file": "reading/<slug>/index.html",
   "charts": 2,
   "sections": 8,
   "has_chinese": true,

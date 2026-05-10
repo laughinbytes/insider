@@ -2,10 +2,11 @@
 # .gitignore conventions for this plugin
 #
 # Patterns for "specific directories at the repo root" MUST start with `/` to
-# anchor them. A bare `consume/` would also match `skills/consume/` (or
-# anywhere else in the tree) and silently exclude plugin assets that share a
-# name with a user-output directory. We hit this exact bug once: a `consume/`
-# rule excluded `skills/consume/SKILL.md`. Don't repeat it.
+# anchor them. A bare directory pattern (no leading `/`) matches at any depth
+# and can silently exclude plugin assets that share the same directory name.
+# Historical incident: an unanchored `consume/` rule (the old name for the
+# user-output `reading/` directory) silently matched `skills/consume/` and
+# excluded `skills/consume/SKILL.md` from the initial commit. Don't repeat it.
 #
 # Patterns for "leaf files that can appear anywhere" (e.g. `.DS_Store`,
 # `*.pyc`) are intentionally unanchored — they should match at any depth.
@@ -17,7 +18,7 @@
 # User-generated research output (per-user, not part of the plugin)
 /research/
 /data/
-/consume/
+/reading/
 /.checkpoint/
 
 # Local Claude Code state (per-user, never distributed)

@@ -105,7 +105,7 @@ If the chain doesn't compute (e.g., the text says "40% of $8-10B = $5.2B" but $5
 1. **Flag and skip**: write the claim to `data/extraction-issues.jsonl` instead of `claims.jsonl`, with `reason: "inference chain arithmetic mismatch"` and the computed values. Surface in the return JSON's `arithmetic_failures` array.
 2. **Auto-correct (only if obvious)**: if exactly one of (numerator, denominator, ratio) is wrong by a clear typo (e.g., "$5.2B of $8-10B" with "40%" — fix the percentage to "~58%"), correct it AND log the correction.
 
-This catches the f-6 class of error at extraction time. Without this check, broken inference chains propagate to consume HTML and tools downstream.
+This catches the f-6 class of error at extraction time. Without this check, broken inference chains propagate to reading HTML and tools downstream.
 
 ## Tool usage
 

@@ -1,6 +1,6 @@
 ---
 name: industry
-description: Generate a deep-dive industry analysis using parallel specialized agents with checkpointing. Produces raw markdown, structured data layer, and intelligent consume artifact. Use when the user runs /industry or wants a VC / equity-research-grade breakdown of a sector.
+description: Generate a deep-dive industry analysis using parallel specialized agents with checkpointing. Produces raw markdown, structured data layer, and intelligent reading artifact. Use when the user runs /industry or wants a VC / equity-research-grade breakdown of a sector.
 argument-hint: <industry> [--resume]
 allowed-tools: [Read, Write, Edit, Bash, WebSearch, WebFetch, mcp__gemini-search__web_search, Task, Glob, Grep]
 ---
@@ -270,7 +270,7 @@ Pass:
 The agent is an **intelligent designer**, not a template filler. It:
 1. **Selectively reads** raw files (thesis.md first, then 3-5 more based on what the thesis needs)
 2. **Makes design decisions**: which tables become charts, what the narrative arc is, what to highlight
-3. **Generates** a single `consume/<slug>/index.html` with:
+3. **Generates** a single `reading/<slug>/index.html` with:
    - **Inline SVG** charts (bar, line, scatter, flow) — no libraries, no CDN
    - **Bilingual content:** English primary + Chinese (中文) secondary, both in the same file behind a CSS toggle
    - **Zero external dependencies:** renders fully offline with `file://`
@@ -288,7 +288,7 @@ Phase 4.5 catches numerical and logical defects that the Phase 4 review gate can
 
 **Stage A — `${CLAUDE_PLUGIN_ROOT}/tools/verify-numerics.sh <slug>`** (code, no LLM)
 
-Cross-checks every numeric token in `consume/<slug>/index.html` against `data/claims.jsonl`. Flags numbers without a matching claim, stale claims, and adjacent `$amount + percentage` pairs that may carry implicit denominators. Pure code, fast, deterministic.
+Cross-checks every numeric token in `reading/<slug>/index.html` against `data/claims.jsonl`. Flags numbers without a matching claim, stale claims, and adjacent `$amount + percentage` pairs that may carry implicit denominators. Pure code, fast, deterministic.
 
 ```bash
 ${CLAUDE_PLUGIN_ROOT}/tools/verify-numerics.sh <slug>
@@ -311,10 +311,10 @@ Verdicts:
 
 Write `.checkpoint/industries/<slug>/phase-4-complete.json`.
 
-**Auto-open:** The orchestrator MUST automatically open the consume HTML in the user's default browser immediately after Phase 4 completes. Do not wait for the user to ask.
+**Auto-open:** The orchestrator MUST automatically open the reading HTML in the user's default browser immediately after Phase 4 completes. Do not wait for the user to ask.
 
 ```bash
-open "consume/<slug>/index.html"
+open "reading/<slug>/index.html"
 ```
 
 If the user wants to view it again later, use `${CLAUDE_PLUGIN_ROOT}/tools/open.sh <slug>`.
@@ -327,15 +327,15 @@ Research complete: <Industry Name>
 Phases:     6/6 (1 + 2 + 3 + 3.5 + 3.7 + 4)
 Raw files:  9
 Data layer: X claims, Y entities, Z sources, W metrics
-Consume:    consume/<slug>/index.html  ← Auto-opened in browser
+Consume:    reading/<slug>/index.html  ← Auto-opened in browser
             └─ Zero dependencies (inline SVG, no CDN)
             └─ Bilingual: EN + 中文 (single file, CSS toggle)
 Checkpoint: .checkpoint/industries/<slug>/phase-4-complete.json
 
 To resume later: /industry <industry> --resume
 To query data:   ${CLAUDE_PLUGIN_ROOT}/tools/query.sh stats
-To regenerate consume only: /consume <slug>
-To open consume: ${CLAUDE_PLUGIN_ROOT}/tools/open.sh <slug>
+To regenerate the reading only: /consume <slug>
+To open the reading: ${CLAUDE_PLUGIN_ROOT}/tools/open.sh <slug>
 ```
 
 ## Self-healing recovery (automated)

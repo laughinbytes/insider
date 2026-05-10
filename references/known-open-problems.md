@@ -28,7 +28,7 @@ These are not bugs to fix in the next release. They are open research problems. 
 **Why automated detection is hard:** Plausibility checks on numeric estimates require external grounding — comparing against benchmarks, sanity checks, or domain priors. The plugin's verifier checks consistency *within the artifact*; it cannot judge whether the artifact's decomposition reflects reality.
 
 **Current mitigation:**
-- `claim_ids[]` requirement forces every value to trace to research; if a value is in the research, the research is what's wrong, not the consume layer
+- `claim_ids[]` requirement forces every value to trace to research; if a value is in the research, the research is what's wrong, not the reading layer
 - `verify-claims.py` arithmetic check on inference chains
 - Committee vote (investor / expert / skeptic) provides three perspectives that may flag implausible numbers
 

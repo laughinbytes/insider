@@ -144,14 +144,14 @@ One line per metric observation. Append-only.
 - `entities.json` is read-modify-write (update existing, add new)
 - `sources.jsonl` is read-modify-write by URL key
 
-## consume/<slug>/numerics.json
+## reading/<slug>/numerics.json
 
-Sibling of `consume/<slug>/index.html`. Written by `consume-agent` at the end of Phase 4. Lists every numeric annotation in the page (hero metrics, chart bars, table cells, open-secret quoted figures) with its grounding claim and (for ratios) its explicit denominator. Read by `${CLAUDE_PLUGIN_ROOT}/tools/verify-numerics.sh` for code-based validation; without it the verifier falls back to noisy regex extraction.
+Sibling of `reading/<slug>/index.html`. Written by `consume-agent` at the end of Phase 4. Lists every numeric annotation in the page (hero metrics, chart bars, table cells, open-secret quoted figures) with its grounding claim and (for ratios) its explicit denominator. Read by `${CLAUDE_PLUGIN_ROOT}/tools/verify-numerics.sh` for code-based validation; without it the verifier falls back to noisy regex extraction.
 
 ```json
 {
   "slug": "ai-agents",
-  "page": "consume/ai-agents/index.html",
+  "page": "reading/ai-agents/index.html",
   "generated_at": "2026-05-10",
   "annotations": [
     {
@@ -193,7 +193,7 @@ Sibling of `consume/<slug>/index.html`. Written by `consume-agent` at the end of
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
 | `slug` | string | yes | Project slug |
-| `page` | string | yes | Path to the consume HTML this manifest covers |
+| `page` | string | yes | Path to the reading HTML this manifest covers |
 | `generated_at` | string (ISO date) | yes | When the manifest was emitted |
 | `annotations[].id` | string | yes | Unique within page (kebab-case) |
 | `annotations[].label` | string | yes | Human-readable name (matches HTML label) |

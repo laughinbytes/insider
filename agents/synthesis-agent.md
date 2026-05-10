@@ -39,7 +39,7 @@ Every claim with `[inference]` source class must include the supporting math cha
 3. Compute: do the premises arithmetically support the conclusion (within ±5% tolerance)?
 4. If not, EITHER fix the conclusion OR fix the premise — do not ship a chain that doesn't compute.
 
-This catches the f-6 class of error before it reaches `claims.jsonl` and propagates to consume HTML.
+This catches the f-6 class of error before it reaches `claims.jsonl` and propagates to reading HTML.
 
 ## Reference files (flexible — write what serves the thesis)
 

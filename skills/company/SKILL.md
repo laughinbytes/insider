@@ -1,6 +1,6 @@
 ---
 name: company
-description: Generate a company-level deep-dive analysis using parallel specialized agents with checkpointing. Anchored on SEC filings and earnings transcripts. Produces raw markdown, structured data layer, and intelligent consume artifact. Use when the user runs /company.
+description: Generate a company-level deep-dive analysis using parallel specialized agents with checkpointing. Anchored on SEC filings and earnings transcripts. Produces raw markdown, structured data layer, and intelligent reading artifact. Use when the user runs /company.
 argument-hint: <name-or-ticker> [--resume]
 allowed-tools: [Read, Write, Edit, Bash, WebSearch, WebFetch, mcp__gemini-search__web_search, Task, Glob, Grep]
 ---
@@ -17,7 +17,7 @@ Phase 2: financials-agent         (parallel)    → financials.md
           competitive-agent       (parallel)    → competitive.md
 Phase 3: synthesis-agent          (blocking)    → thesis.md, scenarios.md, gaps.md, sources.md
 Phase 3.7: data-extraction-agent  (blocking)    → claims/sources/entities/metrics jsonl
-Phase 4: consume-agent            (blocking)    → consume/<slug>/index.html (single bilingual file, zero deps)
+Phase 4: consume-agent            (blocking)    → reading/<slug>/index.html (single bilingual file, zero deps)
 ```
 
 ## Permissions
@@ -144,7 +144,7 @@ Write `.checkpoint/companies/<slug>/phase-3.7-data.json`.
 
 ## Phase 4 — Consume (blocking, single agent)
 
-Spawn `consume-agent`. The agent reads raw files, designs the artifact, and writes one `consume/<slug>/index.html` (single bilingual file, zero external dependencies, inline SVG charts).
+Spawn `consume-agent`. The agent reads raw files, designs the artifact, and writes one `reading/<slug>/index.html` (single bilingual file, zero external dependencies, inline SVG charts).
 
 ### Review gate
 
@@ -154,7 +154,7 @@ Spawn `review-agent` for Phase 4 checks (zero CDN, thesis clear, bilingual toggl
 
 Same two-stage verifier as the industry pipeline (see `skills/industry/SKILL.md` § "Phase 4.5"):
 
-1. **Code stage**: `${CLAUDE_PLUGIN_ROOT}/tools/verify-numerics.sh <slug>` cross-checks every numeric token in the consume HTML against `data/claims.jsonl`. Exit 0 = matched, 1 = unmatched / stale.
+1. **Code stage**: `${CLAUDE_PLUGIN_ROOT}/tools/verify-numerics.sh <slug>` cross-checks every numeric token in the reading HTML against `data/claims.jsonl`. Exit 0 = matched, 1 = unmatched / stale.
 2. **LLM stage**: spawn `${CLAUDE_PLUGIN_ROOT}/agents/logic-verifier-agent.md` for chart-arithmetic, cross-file contradictions, definition drift, inference-chain validity, source-claim spot-checks. Writes `.checkpoint/companies/<slug>/phase-4.5-logic-review.json`.
 
 Verdict mapping is the same: PASS / CONDITIONAL / FAIL → if FAIL, regenerate via `consume-agent` Round 2 with the findings list.
@@ -163,10 +163,10 @@ Verdict mapping is the same: PASS / CONDITIONAL / FAIL → if FAIL, regenerate v
 
 Write `.checkpoint/companies/<slug>/phase-4-complete.json`.
 
-**Auto-open:** Orchestrator MUST automatically open the consume HTML in the user's default browser immediately after Phase 4 completes:
+**Auto-open:** Orchestrator MUST automatically open the reading HTML in the user's default browser immediately after Phase 4 completes:
 
 ```bash
-open "consume/<slug>/index.html"
+open "reading/<slug>/index.html"
 ```
 
 ## Final report
@@ -178,7 +178,7 @@ Phases:     5/5 (1 + 2 + 3 + 3.7 + 4)
 Raw files:  7
 Filings:    N 10-Ks, M transcripts, P 8-Ks
 Data layer: X claims, Y entities, Z sources, W metrics
-Consume:    consume/<slug>/index.html  ← Auto-opened in browser
+Consume:    reading/<slug>/index.html  ← Auto-opened in browser
 Checkpoint: .checkpoint/companies/<slug>/phase-4-complete.json
 ```
 
