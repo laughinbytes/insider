@@ -228,7 +228,7 @@ After review gate passes, spawn **3 committee members in parallel**:
 - Asks: "What are the vulnerabilities? What could be wrong?"
 - Verdict: PASS / CONDITIONAL / FAIL (derived from item-level KEEP/DEMOTE/DELETE counts — see `${CLAUDE_PLUGIN_ROOT}/agents/skeptic-agent.md` for mapping)
 
-**Decision rules:** see `${CLAUDE_PLUGIN_ROOT}/agents/committee.md` for the canonical decision table. Summary:
+**Decision rules:** see `${CLAUDE_PLUGIN_ROOT}/references/committee-protocol.md` for the canonical decision table. Summary:
 
 | Investor | Expert | Skeptic | Decision | Action |
 |----------|--------|---------|----------|--------|
@@ -242,7 +242,7 @@ After review gate passes, spawn **3 committee members in parallel**:
 
 Write `.checkpoint/industries/<slug>/phase-3-synthesis.json`.
 
-## Phase 3.7 — Data layer extraction (blocking, single agent)
+## Phase 3.7 — Data extraction (blocking, single agent)
 
 Spawn `data-extraction-agent` via Task tool. Pass:
 - All raw files in `research/industries/<slug>/`
@@ -259,7 +259,7 @@ The agent reads every raw markdown file and writes/appends:
 
 Write `.checkpoint/industries/<slug>/phase-3.7-data.json` with `claims_extracted`, `sources_added`, `entities_touched`, `metrics_observed` counts.
 
-## Phase 4 — Consume (blocking, single agent)
+## Phase 4 — Reading generation (blocking, single agent)
 
 Spawn `consume-agent` via Task tool.
 

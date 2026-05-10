@@ -42,7 +42,7 @@ research/ + data/ + reading/
 | Command | Use when |
 |---------|----------|
 | `/industry <industry>` | Decode a sector |
-| `/company <ticker>` | Diligence a specific company |
+| `/company <name-or-ticker>` | Diligence a specific company |
 | `/consume <slug>` | Regenerate the reading from existing research |
 | `/lens <slug> <stakeholder>` | Stakeholder-filtered prep doc |
 | `/audit <slug>` | Freshness check using data layer |

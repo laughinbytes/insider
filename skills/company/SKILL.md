@@ -129,7 +129,7 @@ Spawn `review-agent` for Phase 3 checks. PASS / CONDITIONAL / FAIL.
 
 Write `.checkpoint/companies/<slug>/phase-3-synthesis.json`.
 
-## Phase 3.7 — Data layer extraction (blocking, single agent)
+## Phase 3.7 — Data extraction (blocking, single agent)
 
 Spawn `data-extraction-agent` via Task tool. Pass:
 - All raw files in `research/companies/<slug>/`
@@ -142,7 +142,7 @@ Writes/appends `data/claims.jsonl`, `data/sources.jsonl`, `data/entities.json`, 
 
 Write `.checkpoint/companies/<slug>/phase-3.7-data.json`.
 
-## Phase 4 — Consume (blocking, single agent)
+## Phase 4 — Reading generation (blocking, single agent)
 
 Spawn `consume-agent`. The agent reads raw files, designs the artifact, and writes one `reading/<slug>/index.html` (single bilingual file, zero external dependencies, inline SVG charts).
 
