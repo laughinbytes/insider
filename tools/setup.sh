@@ -193,22 +193,31 @@ fi
 echo ""
 log_info "Checking optional dependencies..."
 
+GEMINI_AVAILABLE="false"
 if command -v gemini >/dev/null 2>&1; then
   log_ok "Gemini CLI found ($(gemini --version 2>/dev/null || echo 'version unknown'))"
-  log_info "  mcp__gemini-search__web_search will be available as a search fallback"
+  GEMINI_AVAILABLE="true"
+  echo ""
+  echo "  Gemini CLI is the underlying dependency for the gemini search"
+  echo "  MCP server (mcp__gemini-search__web_search)."
+  echo ""
+  echo "  To prioritize gemini search over WebSearch, edit:"
+  echo "    .insider/search-priority.json"
+  echo "  and move 'mcp__gemini-search__web_search' to the first position"
+  echo "  in the 'priority' array."
+  echo ""
 else
   log_warn "Gemini CLI not found"
   echo ""
-  echo "  The plugin uses mcp__gemini-search__web_search as a search fallback."
-  echo "  Without Gemini CLI, research still works but resilience is reduced"
-  echo "  for non-English sources and real-time queries."
+  echo "  Gemini CLI is the underlying dependency for the gemini search"
+  echo "  MCP server. It is NOT bundled with this plugin (to avoid MCP"
+  echo "  namespace collision — see references/known-open-problems.md)."
   echo ""
   echo "  To install:"
   echo "    npm install -g @anthropic-ai/gemini-cli"
   echo ""
-  echo "  The plugin intentionally does NOT bundle .claude/mcp.json to avoid"
-  echo "  collision with any Gemini MCP server you may already have configured."
-  echo "  See references/known-open-problems.md § Open problem 4 for details."
+  echo "  After installing, re-run setup.sh and then edit"
+  echo "  .insider/search-priority.json to prioritize gemini search."
   echo ""
 fi
 
@@ -219,17 +228,9 @@ log_info "Generating search tool priority configuration..."
 INSIDER_DIR="$PROJECT_ROOT/.insider"
 mkdir -p "$INSIDER_DIR"
 
-# Detect available search tools and build priority array
-PRIORITY_ARRAY=""
-if command -v gemini >/dev/null 2>&1; then
-  PRIORITY_ARRAY='"mcp__gemini-search__web_search", "WebSearch"'
-  GEMINI_AVAILABLE="true"
-  log_ok "Gemini CLI detected — prioritizing mcp__gemini-search__web_search"
-else
-  PRIORITY_ARRAY='"WebSearch"'
-  GEMINI_AVAILABLE="false"
-  log_info "Gemini CLI not detected — WebSearch only"
-fi
+# Default priority: neutral. WebSearch is Claude Code built-in and always available.
+# Gemini search is opt-in via manual edit — the plugin does not assume user preference.
+PRIORITY_ARRAY='"WebSearch"'
 
 cat > "$INSIDER_DIR/search-priority.json" << PRIOEOF
 {

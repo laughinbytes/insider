@@ -10,10 +10,10 @@ The macro analyst sub-agent and the company skill both read this file. The orche
 
 Agent search tool priority is **adaptive** — it depends on what the user has installed and authorized. Run `./tools/setup.sh` to auto-detect and generate `.insider/search-priority.json`. Agents read this config at session start.
 
-**Default detection logic:**
-- If Gemini CLI is installed → `mcp__gemini-search__web_search` is Tier 1, `WebSearch` is Tier 2
-- If Gemini CLI is missing → `WebSearch` is Tier 1
-- User can manually edit `.insider/search-priority.json` to override
+**Default:**
+- `WebSearch` is Tier 1 (Claude Code built-in, always available)
+- `mcp__gemini-search__web_search` is NOT included in the default priority — user must manually edit `.insider/search-priority.json` to add it
+- Gemini CLI detection (`setup.sh` Step 4) only affects the `available` flag and the install prompt, never the `priority` array
 
 | Tier | Tool | When to use | When NOT to use |
 |------|------|-------------|-----------------|

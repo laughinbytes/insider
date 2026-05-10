@@ -50,7 +50,7 @@ Write a complete `players.md` before stopping. There is no time limit and no too
 1. **Adaptive search tool priority:**
    - At the start of your session, Read `.insider/search-priority.json` to discover your configured tool order.
    - Use search tools in the order specified by the `priority` array.
-   - If the config is missing, default order is: `WebSearch` → `mcp__gemini-search__web_search` (if available) → Bash (`gemini search`, `curl`).
+   - If the config is missing, default to `WebSearch` first, then `mcp__gemini-search__web_search` if Claude Code has authorized it for this session, then Bash fallback.
    - `WebFetch` is NEVER a primary search tool — only use it for specific URLs from the whitelist in `references/data-sources.md` § WebFetch domain whitelist.
 
 2. **Bash usage guidance:**

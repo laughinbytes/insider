@@ -91,7 +91,7 @@ research/ + data/ + reading/
 - Claude Code (the plugin is a Claude Code plugin)
 
 ### Optional but recommended
-- **Gemini CLI** (`npm install -g @anthropic-ai/gemini-cli`) — enables `mcp__gemini-search__web_search` as the second tier in the search fallback chain. Without it, agents fall back from WebSearch directly to WebFetch / Bash curl. Research still works; resilience is slightly reduced for non-English sources and real-time queries.
+- **Gemini CLI** (`npm install -g @anthropic-ai/gemini-cli`) — underlying dependency for the gemini search MCP server (`mcp__gemini-search__web_search`). Not bundled (avoids MCP namespace collision). After installing, manually edit `.insider/search-priority.json` to include it in your search tool order.
 
 **Why Gemini CLI is not bundled:** The plugin intentionally does **not** ship a `.claude/mcp.json` to avoid namespace collision with a Gemini MCP server the user may already have configured globally. See [`references/known-open-problems.md`](references/known-open-problems.md) § Open problem 4 for the full collision analysis.
 

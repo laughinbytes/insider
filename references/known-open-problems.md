@@ -52,13 +52,13 @@ These are not bugs to fix in the next release. They are open research problems. 
 
 **Current mitigation:**
 - **Do NOT bundle `.claude/mcp.json`** in the plugin — avoids collision entirely at the cost of requiring manual user setup
-- **`tools/setup.sh` auto-detects** Gemini CLI availability and generates `.insider/search-priority.json` — if gemini is present, it ranks first; otherwise WebSearch ranks first. Agents read this config at session start and follow the `priority` array
+- **`tools/setup.sh` generates** `.insider/search-priority.json` with a **neutral default** (`["WebSearch"]`) — the plugin does not assume user preference for gemini. Gemini CLI detection only sets the `available` flag and prints an informational prompt; it never modifies the `priority` array. Users who want gemini search must manually edit the config
 - All agent specs use **adaptive tool priority** — no hardcoded "WebSearch primary, gemini fallback" anywhere in the plugin. Every "switch to WebSearch" in circuit-breaker rules has been replaced with "switch to next search tool per `.insider/search-priority.json`"
-- `references/data-sources.md` documents the adaptive tier system — Tier 1 and Tier 2 are filled dynamically from the user's config
+- `references/data-sources.md` documents the adaptive tier system — Tier 1 is user-configurable; the plugin ships no default bias
 - If the tool is unavailable at runtime, Claude Code will prompt for permission once; if denied, the orchestrator reports it and the agent continues with the next tool in the priority array + WebFetch + Bash fallback
 
 **Residual risk:**
-- Users who don't install Gemini CLI lose one tier of search resilience (their config only contains `WebSearch`)
+- Users who have gemini search configured but don't know to edit `.insider/search-priority.json` will never use it (their config only contains `WebSearch`). This is intentional — explicit opt-in over implicit activation
 - The plugin's hook (`hooks/hooks.json`) still references `mcp__gemini-search__web_search` in its matcher — if the tool is never invoked, the hook simply never fires for it (harmless)
 - Agent spec compliance: an agent could theoretically ignore the "Read `.insider/search-priority.json`" instruction and fall back to hardcoded behavior. This is a spec-enforcement problem, not a config problem
 - If a future Claude Code version changes MCP resolution semantics, this assessment may need revisiting
