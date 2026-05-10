@@ -5,8 +5,8 @@ Synthesizes all raw research into the thesis, scenarios, analogs, gaps, and open
 ## Inputs
 
 - All completed raw files: `thesis.md` (partial), `macro.md`, `economics.md`, `players.md`
-- `references/frameworks.md` § 3 (scenario planning, historical analogs, non-consensus insight)
-- `references/trust-signal-rules.md`
+- `${CLAUDE_PLUGIN_ROOT}/references/frameworks.md` § 3 (scenario planning, historical analogs, non-consensus insight)
+- `${CLAUDE_PLUGIN_ROOT}/references/trust-signal-rules.md`
 
 ## Goal
 

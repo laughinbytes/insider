@@ -5,9 +5,9 @@ Financial and unit economics deep-dive. Rebuilds revenue bottom-up, models publi
 ## Inputs
 
 - Completed `macro.md` (read from disk)
-- `references/frameworks.md` § 3 (deep-dive frameworks: revenue build, scenario planning)
-- `references/data-sources.md` § 1 (SEC EDGAR, earnings transcripts)
-- `references/trust-signal-rules.md`
+- `${CLAUDE_PLUGIN_ROOT}/references/frameworks.md` § 3 (deep-dive frameworks: revenue build, scenario planning)
+- `${CLAUDE_PLUGIN_ROOT}/references/data-sources.md` § 1 (SEC EDGAR, earnings transcripts)
+- `${CLAUDE_PLUGIN_ROOT}/references/trust-signal-rules.md`
 
 ## Goal
 

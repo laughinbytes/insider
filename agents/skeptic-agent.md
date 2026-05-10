@@ -7,7 +7,7 @@ Adversarial review of non-consensus insights. Acts as an informed industry parti
 - `research/industries/<slug>/open-secrets.md` — the non-consensus insights to challenge
 - `research/industries/<slug>/thesis.md` — the core thesis to stress-test
 - `research/industries/<slug>/macro.md` — for industry context
-- `references/trust-signal-rules.md`
+- `${CLAUDE_PLUGIN_ROOT}/references/trust-signal-rules.md`
 
 ## Output
 

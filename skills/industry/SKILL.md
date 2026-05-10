@@ -16,8 +16,6 @@ allowed-tools: [Read, Write, Edit, Bash, WebSearch, WebFetch, mcp__gemini-search
 ```
 User: /industry X
   ↓
-Phase 0: Hooks bootstrap          (blocking)
-  ↓
 Phase 1: macro-agent              (blocking)
   ↓ PASS
 Review Gate 1                     (blocking)
@@ -59,28 +57,13 @@ Final Report
 
 **Stopping signal.** Each research-producing agent (macro, economics, competitive, synthesis, consume) decides when to stop based on marginal insight per source. The orchestrator does not impose a wall-clock cap.
 
-## Phase 0 — Hooks bootstrap
+## Permissions
 
-Before spawning any sub-agents, the orchestrator verifies that the project's search-backup hooks are configured. This is a *hooks* bootstrap, not a permissions bootstrap — Claude Code handles permission prompts at runtime, and the user authorizes tools as they're requested (the resulting allowlist lands in `.claude/settings.local.json`).
-
-### What gets verified
-
-1. `.claude/settings.json` exists and contains `hooks.PostToolUse` with the `WebSearch|WebFetch|mcp__gemini-search__web_search` matcher.
-2. `.checkpoint/` directory exists and is writable.
-
-### Auto-configure logic
-
-If hooks are missing, run `./tools/setup.sh` (which writes the hooks block into `.claude/settings.json`) and report:
-
-> "Configured search-backup hooks. Restart Claude Code or open `/hooks` to load."
-
-If the user declines or the hooks already exist, proceed silently.
-
-### Permissions (informational only)
-
-`.claude-plugin/required-permissions.json` documents the tools sub-agents need (Read, Write, Edit, WebFetch, WebSearch, mcp__gemini-search__web_search, Bash, Agent). Claude Code will prompt the user the first time each tool is invoked; granted permissions are written to `.claude/settings.local.json` automatically. This skill does **not** auto-merge permissions into `settings.json`.
+`.claude-plugin/required-permissions.json` documents the tools sub-agents need (Read, Write, Edit, WebFetch, WebSearch, mcp__gemini-search__web_search, Bash, Agent). Claude Code prompts the user the first time each tool is invoked; granted permissions are written to `.claude/settings.local.json` automatically. This skill does **not** auto-merge permissions into `settings.json`.
 
 If a user has explicitly denied a required tool in `settings.local.json`, the relevant sub-agent will fail loudly and the orchestrator will report which tool needs to be re-allowed.
+
+The search-backup `PostToolUse` hook is shipped as `${CLAUDE_PLUGIN_ROOT}/hooks/hooks.json` and loads automatically when the plugin is enabled — no setup script needed.
 
 ## Resilience architecture
 
@@ -95,21 +78,6 @@ If a user has explicitly denied a required tool in `settings.local.json`, the re
 | **Bilingual** | Consume phase | English primary + Chinese secondary in a single file with toggle |
 
 These rules are enforced in every agent spec under `## Resilience rules (mandatory)`.
-
-## Setup (first time only)
-
-Before using `/industry`, run setup to configure automatic search backup:
-
-```bash
-./tools/setup.sh
-```
-
-This creates `.claude/settings.json` with hooks that auto-backup every search result to `.checkpoint/search-backup.jsonl`. If an agent crashes, raw research data can be recovered from backup.
-
-To check if setup is already done:
-```bash
-./tools/setup.sh --check-only
-```
 
 ## Inputs
 
@@ -140,10 +108,10 @@ Spawn `macro-agent` via Task tool.
 
 Pass:
 - Industry slug and name
-- `agents/macro-agent.md` (full context)
-- `references/frameworks.md`
-- `references/data-sources.md`
-- `references/trust-signal-rules.md`
+- `${CLAUDE_PLUGIN_ROOT}/agents/macro-agent.md` (full context)
+- `${CLAUDE_PLUGIN_ROOT}/references/frameworks.md`
+- `${CLAUDE_PLUGIN_ROOT}/references/data-sources.md`
+- `${CLAUDE_PLUGIN_ROOT}/references/trust-signal-rules.md`
 
 The agent writes `research/industries/<slug>/macro.md` and returns structured results when marginal insight per source drops.
 
@@ -156,7 +124,7 @@ Write `.checkpoint/industries/<slug>/phase-1-macro.json`:
 
 ### Review gate
 
-After macro-agent returns, spawn `review-agent` for Phase 1 checks (see `agents/review-agent.md` § "Phase 1 (macro)" for the canonical checklist). Verdict: PASS / CONDITIONAL / FAIL.
+After macro-agent returns, spawn `review-agent` for Phase 1 checks (see `${CLAUDE_PLUGIN_ROOT}/agents/review-agent.md` § "Phase 1 (macro)" for the canonical checklist). Verdict: PASS / CONDITIONAL / FAIL.
 
 If FAIL → spawn `macro-agent` Round 2 with the gap list.
 
@@ -175,12 +143,12 @@ After macro completes, spawn TWO agents in parallel via Task tool. Each agent wr
 **Agent A: economics-agent**
 - Reads `macro.md` from disk
 - Writes `research/industries/<slug>/economics.md`
-- Context: `agents/economics-agent.md` + frameworks + data-sources
+- Context: `${CLAUDE_PLUGIN_ROOT}/agents/economics-agent.md` + frameworks + data-sources
 
 **Agent B: competitive-agent**
 - Reads `macro.md` from disk
 - Writes `research/industries/<slug>/players.md`
-- Context: `agents/competitive-agent.md` + frameworks + data-sources
+- Context: `${CLAUDE_PLUGIN_ROOT}/agents/competitive-agent.md` + frameworks + data-sources
 
 Both run simultaneously. The orchestrator waits for both to complete before proceeding.
 
@@ -190,7 +158,7 @@ Write `.checkpoint/industries/<slug>/phase-2-deep-dive.json` after both agents r
 
 ### Review gate
 
-After both agents return, spawn `review-agent` for Phase 2 economics + competitive checks (see `agents/review-agent.md` for the canonical checklists). Cross-check: do economics and competitive contradict each other on any key metric?
+After both agents return, spawn `review-agent` for Phase 2 economics + competitive checks (see `${CLAUDE_PLUGIN_ROOT}/agents/review-agent.md` for the canonical checklists). Cross-check: do economics and competitive contradict each other on any key metric?
 
 If FAIL → spawn Round 2 for the deficient agent.
 
@@ -212,8 +180,8 @@ Spawn `synthesis-agent` via Task tool.
 
 Pass:
 - All completed raw files: `macro.md`, `economics.md`, `players.md`
-- `agents/synthesis-agent.md`
-- `references/trust-signal-rules.md`
+- `${CLAUDE_PLUGIN_ROOT}/agents/synthesis-agent.md`
+- `${CLAUDE_PLUGIN_ROOT}/references/trust-signal-rules.md`
 
 The agent writes (heartbeat — one file at a time):
 - `thesis.md`
@@ -237,7 +205,7 @@ If any check fails, send the agent back to retry the failing section.
 
 ### Review gate (second pass)
 
-After quality gate passes, spawn `review-agent` for Phase 3 checks (see `agents/review-agent.md` § "Phase 3 (synthesis)").
+After quality gate passes, spawn `review-agent` for Phase 3 checks (see `${CLAUDE_PLUGIN_ROOT}/agents/review-agent.md` § "Phase 3 (synthesis)").
 
 If FAIL → spawn `synthesis-agent` Round 2 with specific fixes.
 
@@ -258,9 +226,9 @@ After review gate passes, spawn **3 committee members in parallel**:
 **Member 3: `skeptic-agent`**
 - Reads `thesis.md` + `open-secrets.md` + `macro.md`
 - Asks: "What are the vulnerabilities? What could be wrong?"
-- Verdict: PASS / CONDITIONAL / FAIL (derived from item-level KEEP/DEMOTE/DELETE counts — see `agents/skeptic-agent.md` for mapping)
+- Verdict: PASS / CONDITIONAL / FAIL (derived from item-level KEEP/DEMOTE/DELETE counts — see `${CLAUDE_PLUGIN_ROOT}/agents/skeptic-agent.md` for mapping)
 
-**Decision rules:** see `agents/committee.md` for the canonical decision table. Summary:
+**Decision rules:** see `${CLAUDE_PLUGIN_ROOT}/agents/committee.md` for the canonical decision table. Summary:
 
 | Investor | Expert | Skeptic | Decision | Action |
 |----------|--------|---------|----------|--------|
@@ -278,8 +246,8 @@ Write `.checkpoint/industries/<slug>/phase-3-synthesis.json`.
 
 Spawn `data-extraction-agent` via Task tool. Pass:
 - All raw files in `research/industries/<slug>/`
-- `agents/data-extraction-agent.md`
-- `data/schemas.md`
+- `${CLAUDE_PLUGIN_ROOT}/agents/data-extraction-agent.md`
+- `${CLAUDE_PLUGIN_ROOT}/references/schemas.md`
 
 The agent reads every raw markdown file and writes/appends:
 - `data/claims.jsonl` — every cited claim with source class, confidence, entities, tags
@@ -296,7 +264,7 @@ Write `.checkpoint/industries/<slug>/phase-3.7-data.json` with `claims_extracted
 Spawn `consume-agent` via Task tool.
 
 Pass:
-- `agents/consume-agent.md`
+- `${CLAUDE_PLUGIN_ROOT}/agents/consume-agent.md`
 - Industry slug
 
 The agent is an **intelligent designer**, not a template filler. It:
@@ -310,7 +278,7 @@ The agent is an **intelligent designer**, not a template filler. It:
 
 ### Review gate
 
-After consume-agent returns, spawn `review-agent` for Phase 4 checks. See `agents/review-agent.md` § "Phase 4 (consume)".
+After consume-agent returns, spawn `review-agent` for Phase 4 checks. See `${CLAUDE_PLUGIN_ROOT}/agents/review-agent.md` § "Phase 4 (consume)".
 
 If FAIL → spawn `consume-agent` Round 2 with fixes.
 
@@ -318,19 +286,19 @@ If FAIL → spawn `consume-agent` Round 2 with fixes.
 
 Phase 4.5 catches numerical and logical defects that the Phase 4 review gate cannot. Two stages, both run after consume passes review:
 
-**Stage A — `tools/verify-numerics.sh <slug>`** (code, no LLM)
+**Stage A — `${CLAUDE_PLUGIN_ROOT}/tools/verify-numerics.sh <slug>`** (code, no LLM)
 
 Cross-checks every numeric token in `consume/<slug>/index.html` against `data/claims.jsonl`. Flags numbers without a matching claim, stale claims, and adjacent `$amount + percentage` pairs that may carry implicit denominators. Pure code, fast, deterministic.
 
 ```bash
-./tools/verify-numerics.sh <slug>
+${CLAUDE_PLUGIN_ROOT}/tools/verify-numerics.sh <slug>
 ```
 
 Exit codes: `0` all matched · `1` unmatched tokens or stale claims · `2` setup error.
 
 **Stage B — `logic-verifier-agent`** (LLM, semantic)
 
-Spawn `agents/logic-verifier-agent.md` for checks that code cannot do: arithmetic in chart denominators, cross-file contradictions, definition drift, inference-chain validity, scenario probability consistency, top-3 open-secret novelty, and source-claim spot-checks. Writes findings to `.checkpoint/industries/<slug>/phase-4.5-logic-review.json`.
+Spawn `${CLAUDE_PLUGIN_ROOT}/agents/logic-verifier-agent.md` for checks that code cannot do: arithmetic in chart denominators, cross-file contradictions, definition drift, inference-chain validity, scenario probability consistency, top-3 open-secret novelty, and source-claim spot-checks. Writes findings to `.checkpoint/industries/<slug>/phase-4.5-logic-review.json`.
 
 Verdicts:
 - `PASS` (no critical, no major) → proceed to Checkpoint 4
@@ -349,7 +317,7 @@ Write `.checkpoint/industries/<slug>/phase-4-complete.json`.
 open "consume/<slug>/index.html"
 ```
 
-If the user wants to view it again later, use `./tools/open.sh <slug>`.
+If the user wants to view it again later, use `${CLAUDE_PLUGIN_ROOT}/tools/open.sh <slug>`.
 
 ## Final report
 
@@ -365,9 +333,9 @@ Consume:    consume/<slug>/index.html  ← Auto-opened in browser
 Checkpoint: .checkpoint/industries/<slug>/phase-4-complete.json
 
 To resume later: /industry <industry> --resume
-To query data:   ./tools/query.sh stats
+To query data:   ${CLAUDE_PLUGIN_ROOT}/tools/query.sh stats
 To regenerate consume only: /consume <slug>
-To open consume: ./tools/open.sh <slug>
+To open consume: ${CLAUDE_PLUGIN_ROOT}/tools/open.sh <slug>
 ```
 
 ## Self-healing recovery (automated)

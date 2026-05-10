@@ -14,11 +14,12 @@ Exit: 0 = all chains compute, 1 = broken chains, 2 = setup error.
 
 import argparse
 import json
+import os
 import re
 import sys
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
+ROOT = Path(os.environ.get("INSIDER_PROJECT_ROOT", os.getcwd()))
 CLAIMS_FILE = ROOT / "data" / "claims.jsonl"
 
 # Tolerance for arithmetic checks (±5 percentage points absolute)

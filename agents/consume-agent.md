@@ -35,7 +35,7 @@ What is FORBIDDEN:
 
 **Why this matters:** The plugin's value is rigor-grade research. One fabricated cell undermines every other cell on the page — readers no longer know which numbers to trust. A page with 5 missing cells (marked `—`) is more credible than a page with 5 fabricated cells.
 
-`tools/verify-numerics.sh` runs in strict mode by default. Every numeric token in HTML must appear in `numerics.json`. Every `numerics.json` annotation must have a resolvable `claim_ids[]` (or `derived: true`). Coverage gaps are MAJOR; fabrications are CRITICAL and trigger Phase 4 review FAIL.
+`${CLAUDE_PLUGIN_ROOT}/tools/verify-numerics.sh` runs in strict mode by default. Every numeric token in HTML must appear in `numerics.json`. Every `numerics.json` annotation must have a resolvable `claim_ids[]` (or `derived: true`). Coverage gaps are MAJOR; fabrications are CRITICAL and trigger Phase 4 review FAIL.
 
 ## Anti-amorphous-label rule (HARD — for charts with transitions)
 
@@ -395,9 +395,9 @@ Good:
 Write **two** files:
 
 1. `consume/<slug>/index.html` — the bilingual single-file page.
-2. `consume/<slug>/numerics.json` — structured manifest covering **100% of numeric tokens** in the page (hero metrics, every chart bar, every table cell, every open-secret figure, every scenario percentage and range, every footer count, every callout figure). Schema lives in `data/schemas.md` § "consume/<slug>/numerics.json". No exceptions: if a number appears in the HTML, it must appear in numerics.json with a resolvable `claim_ids[]` or with `"derived": true` and explicit context. The verifier coverage check is strict — uncovered tokens trigger MAJOR gaps in Phase 4 review.
+2. `consume/<slug>/numerics.json` — structured manifest covering **100% of numeric tokens** in the page (hero metrics, every chart bar, every table cell, every open-secret figure, every scenario percentage and range, every footer count, every callout figure). Schema lives in `${CLAUDE_PLUGIN_ROOT}/references/schemas.md` § "consume/<slug>/numerics.json". No exceptions: if a number appears in the HTML, it must appear in numerics.json with a resolvable `claim_ids[]` or with `"derived": true` and explicit context. The verifier coverage check is strict — uncovered tokens trigger MAJOR gaps in Phase 4 review.
 
-Build the complete bilingual HTML in your working memory, run the pre-write numerical self-check (above), enumerate every numeric token, then write both files in two `Write` calls. After writing, run `tools/verify-numerics.sh <slug>` and confirm exit code 0 before returning.
+Build the complete bilingual HTML in your working memory, run the pre-write numerical self-check (above), enumerate every numeric token, then write both files in two `Write` calls. After writing, run `${CLAUDE_PLUGIN_ROOT}/tools/verify-numerics.sh <slug>` and confirm exit code 0 before returning.
 
 ## Resilience rules (mandatory)
 

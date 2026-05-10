@@ -13,9 +13,9 @@ These are not bugs to fix in the next release. They are open research problems. 
 **Why automated detection is hard:** Detecting this requires modeling the real-world relationships between the entities (in this case: GAAP revenue recognition, intercompany pass-through, gross-vs-net basis accounting). The plugin would need a domain-specific reality model to catch it. Encoding all of finance / biology / law / physics into the verifier doesn't scale.
 
 **Current mitigation:**
-- `agents/consume-agent.md` Anti-amorphous-label rule forbids the syntactic pattern (categorical labels in transitions) that hides the error
-- `data/schemas.md` `transition` annotation type requires constituents to be named annotation ids, with cross-step overlap check
-- `agents/skeptic-agent.md` rule 7 asks the skeptic to question whether the chart's primitive matches reality
+- `${CLAUDE_PLUGIN_ROOT}/agents/consume-agent.md` Anti-amorphous-label rule forbids the syntactic pattern (categorical labels in transitions) that hides the error
+- `${CLAUDE_PLUGIN_ROOT}/references/schemas.md` `transition` annotation type requires constituents to be named annotation ids, with cross-step overlap check
+- `${CLAUDE_PLUGIN_ROOT}/agents/skeptic-agent.md` rule 7 asks the skeptic to question whether the chart's primitive matches reality
 
 **Residual risk:** A determined fabricator can still produce a plausible-looking constituent decomposition that hides a different class of model-mismatch. Domain expert review remains necessary for this class.
 

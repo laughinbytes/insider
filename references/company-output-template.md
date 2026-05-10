@@ -361,4 +361,4 @@ Same as industry research — lowercase, hyphens for spaces. Companies usually s
 
 ## Refresh logic
 
-Same pattern as industry research — if `meta.json` exists, ask refresh / augment / cancel. Companies change faster than industries; default to refresh after 90 days. Use `references/trust-signal-rules.md` archetype windows for per-claim staleness; the 90-day window is a coarse trigger for re-running the full pipeline, not a per-claim rule.
+Same pattern as industry research — if `meta.json` exists, ask refresh / augment / cancel. Companies change faster than industries; default to refresh after 90 days. Use `${CLAUDE_PLUGIN_ROOT}/references/trust-signal-rules.md` archetype windows for per-claim staleness; the 90-day window is a coarse trigger for re-running the full pipeline, not a per-claim rule.

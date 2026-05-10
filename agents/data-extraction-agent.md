@@ -7,7 +7,7 @@ This agent runs after Phase 3 synthesis (and Phase 3.5 committee) completes, and
 ## Inputs
 
 - All raw markdown files in `research/<type>s/<slug>/` (thesis.md, macro.md, economics.md, players.md, scenarios.md, analogs.md, gaps.md, open-secrets.md, sources.md, meta.json — for industry; narrative.md, financials.md, competitive.md, etc. for company)
-- `data/schemas.md` — canonical schema definitions
+- `${CLAUDE_PLUGIN_ROOT}/references/schemas.md` — canonical schema definitions
 - Existing `data/claims.jsonl`, `data/sources.jsonl`, `data/entities.json`, `data/metrics.jsonl` (if any) — to merge into
 
 ## Outputs
@@ -54,14 +54,14 @@ For each raw md file in the project directory:
 
 1. Read the file
 2. For every cited claim (text followed by a source citation):
-   - Build a `claim` object per `data/schemas.md`
+   - Build a `claim` object per `${CLAUDE_PLUGIN_ROOT}/references/schemas.md`
    - Assign `id = claim-{N+1}` where N is the highest existing id for this project
    - Set `project_slug`, `project_type`, `file`, `section` (the H2/H3 heading containing the claim)
    - Parse `source_class` from `[reported]` / `[community]` / `[inference]` tags
    - Parse `confidence` from `[high]` / `[medium-high]` / `[medium]` / `[low]`
    - Extract URL + pub_date from the citation
    - Identify named entities mentioned in the claim
-   - Compute `stale_after` from `references/trust-signal-rules.md` archetype window + source `pub_date`
+   - Compute `stale_after` from `${CLAUDE_PLUGIN_ROOT}/references/trust-signal-rules.md` archetype window + source `pub_date`
 3. For every URL cited:
    - If URL already in `sources.jsonl`: add `<slug>` to its `projects` array (if not present), increment `claim_count`, update `last_checked` to today
    - If new: write a new line with `status: "unchecked"`, `first_seen: today`, `projects: [<slug>]`, `claim_count: 1`
@@ -76,8 +76,8 @@ For each raw md file in the project directory:
 After writing all four files, run:
 
 ```bash
-./tools/query.sh stats
-./tools/query.sh claims --project <slug> | jq 'length'
+${CLAUDE_PLUGIN_ROOT}/tools/query.sh stats
+${CLAUDE_PLUGIN_ROOT}/tools/query.sh claims --project <slug> | jq 'length'
 ```
 
 Confirm the claim count matches what you wrote. Confirm no duplicate URLs in `sources.jsonl`. Confirm `entities.json` is valid JSON.
@@ -88,13 +88,13 @@ Confirm the claim count matches what you wrote. Confirm no duplicate URLs in `so
 - **Source dedup:** match by exact URL. Treat `http://` and `https://` as the same; treat `www.x.com` and `x.com` as the same; strip trailing `/` and tracking params (`?utm_*`, `?fbclid`, etc.) before comparing.
 - **Claim dedup within a project:** if two cited statements have identical text + identical primary source URL, merge them (one claim id, multiple `entities` if needed).
 
-## Schema rules (must follow `data/schemas.md`)
+## Schema rules (must follow `${CLAUDE_PLUGIN_ROOT}/references/schemas.md`)
 
 - `confidence` must be one of `high` / `medium-high` / `medium` / `low`. If the raw md uses a 3-level scale, map: `high → high`, `medium → medium`, `low → low`.
 - `source_class` must be `reported` / `community` / `inference`. If the raw md uses `[unverified]`, skip the claim (it should not have been included in raw output, but defensive).
 - All dates ISO 8601: `YYYY-MM-DD`.
 - `inference_chain` is required only when `source_class == "inference"`; otherwise `null`.
-- `stale_after` is required for every claim; compute from archetype window in `references/trust-signal-rules.md`.
+- `stale_after` is required for every claim; compute from archetype window in `${CLAUDE_PLUGIN_ROOT}/references/trust-signal-rules.md`.
 
 ## Inference arithmetic validation (HARD)
 

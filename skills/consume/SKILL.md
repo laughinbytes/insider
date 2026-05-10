@@ -34,7 +34,7 @@ This skill is **automatically invoked** at the end of `/industry` and `/company`
 Spawn `consume-agent` via Task tool. The agent owns the full design + generation process.
 
 Pass:
-- `agents/consume-agent.md` (full context, including HTML output specification, inline SVG patterns, bilingual toggle pattern)
+- `${CLAUDE_PLUGIN_ROOT}/agents/consume-agent.md` (full context, including HTML output specification, inline SVG patterns, bilingual toggle pattern)
 - Project slug
 - Project type (industry or company)
 
@@ -43,7 +43,7 @@ The agent:
 2. **Makes design decisions**: which tables become charts, what the narrative arc is, what to highlight
 3. **Writes** `consume/<slug>/index.html` — single bilingual file with interactive EN/中文 toggle, zero external dependencies (inline CSS + inline SVG + minimal inline JS for the toggle only)
 
-**See `agents/consume-agent.md` for:** HTML structure, inline SVG chart formulas (bar / line / scatter / value-chain flow), bilingual toggle CSS+JS, translation quality rules.
+**See `${CLAUDE_PLUGIN_ROOT}/agents/consume-agent.md` for:** HTML structure, inline SVG chart formulas (bar / line / scatter / value-chain flow), bilingual toggle CSS+JS, translation quality rules.
 
 ## Hard constraints (verified by review gate)
 

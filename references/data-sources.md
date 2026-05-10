@@ -15,7 +15,7 @@ Agents MUST follow this tool priority. Using the wrong tool wastes tool calls an
 | **1** | `WebSearch` | General research, discovery, finding sources, fact-checking | Never for direct file downloads |
 | **2** | `mcp__gemini-search__web_search` | Fallback when WebSearch fails or returns thin results | Same as above |
 | **3** | `WebFetch` | ONLY for known-reliable domains (see whitelist below). Fetching specific pages after discovering them via search. | NEVER for news sites, blogs, analyst sites — high 404/403/paywall rate |
-| **4** | `Bash` | File ops, data processing (`jq`, `python3`), project scripts (`./tools/query.sh`); `curl` and `agent-browser` are acceptable as WebFetch fallbacks per the multi-tool fallback chain below | NEVER as the *primary* search tool — always try WebSearch / `mcp__gemini-search__web_search` first |
+| **4** | `Bash` | File ops, data processing (`jq`, `python3`), project scripts (`${CLAUDE_PLUGIN_ROOT}/tools/query.sh`); `curl` and `agent-browser` are acceptable as WebFetch fallbacks per the multi-tool fallback chain below | NEVER as the *primary* search tool — always try WebSearch / `mcp__gemini-search__web_search` first |
 
 ### WebFetch domain whitelist (reliable, low block rate)
 
@@ -72,7 +72,7 @@ When fetching a specific URL fails, agents MUST exhaust the multi-tool fallback 
 {"ts":"2026-05-10T12:00:00Z","phase":"macro","agent":"macro-agent","url":"https://example.com/page","domain":"example.com","error_type":"not-found","error_detail":"404 Not Found"}
 ```
 
-**After-the-fact analysis:** Use `./tools/query.sh webfetch-failures` to analyze patterns. A domain that repeatedly shows `timeout` or `forbidden` likely indicates a network restriction on our side.
+**After-the-fact analysis:** Use `${CLAUDE_PLUGIN_ROOT}/tools/query.sh webfetch-failures` to analyze patterns. A domain that repeatedly shows `timeout` or `forbidden` likely indicates a network restriction on our side.
 
 ---
 

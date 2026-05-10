@@ -10,8 +10,6 @@ Raw layer (markdown)              Data layer (jsonl)         Consume layer (HTML
 
 /industry <industry>
   ↓
-Phase 0: Hooks bootstrap          (blocking)   ← ensures search-backup hook is configured
-  ↓
 Phase 1: macro-agent              (blocking)
   ↓
 Phase 2: economics-agent          (parallel)  ─┐
@@ -36,7 +34,7 @@ research/ + data/ + consume/
 
 **Parallel agents.** Economics and competitive analysis run simultaneously after macro foundation completes. Committee members (investor / expert / skeptic) also vote in parallel.
 
-**Hooks bootstrap.** On first use in any project, run `./tools/setup.sh` to configure the search-backup hook. This writes `.claude/settings.json` with a PostToolUse hook that auto-saves every search result to `.checkpoint/search-backup.jsonl` for recovery. Permissions are handled by Claude Code's runtime prompts (not by this plugin); granted tools land in `.claude/settings.local.json` automatically.
+**Hooks auto-loaded.** The plugin ships `hooks/hooks.json` with a `PostToolUse` hook on `WebSearch | WebFetch | mcp__gemini-search__web_search` that appends every search to `.checkpoint/search-backup.jsonl` in the user's CWD. When the plugin is enabled via `/plugin install`, the hook loads automatically — no setup script required. Permissions are handled by Claude Code's runtime prompts; granted tools land in `.claude/settings.local.json` automatically.
 
 ## Commands
 
@@ -96,23 +94,15 @@ The plugin does **not** auto-merge these into `.claude/settings.json`. Instead, 
 
 ## Setup
 
-`cd` into the project where you want to run `/industry` or `/company`, then:
+**Installed as a Claude Code plugin** (recommended) — nothing to do. `hooks/hooks.json` auto-loads when the plugin is enabled. The search-backup hook creates `.checkpoint/` in your project on first fire.
+
+**Standalone clone (no plugin install)** — run the fallback script from your project root to copy the same hook into your project's `.claude/settings.json`:
 
 ```bash
 /path/to/insider/tools/setup.sh
 ```
 
-This creates `.claude/settings.json` and `.checkpoint/` **in the current working directory**. The search-backup hook auto-saves every search result so an agent crash can be recovered from backup.
-
-To check if already configured:
-```bash
-/path/to/insider/tools/setup.sh --check-only
-```
-
-To target a specific directory instead of `$(pwd)`:
-```bash
-/path/to/insider/tools/setup.sh --project-root /path/to/project
-```
+Optional flags: `--check-only` (verify only) and `--project-root <dir>` (target a directory other than `$(pwd)`).
 
 ## Recovery
 

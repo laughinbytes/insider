@@ -12,14 +12,15 @@ if [ -z "$SLUG" ]; then
   exit 1
 fi
 
-HTML_FILE="$(dirname "$0")/../consume/${SLUG}/index.html"
+ROOT="${INSIDER_PROJECT_ROOT:-$(pwd)}"
+HTML_FILE="$ROOT/consume/${SLUG}/index.html"
 
 if [ ! -f "$HTML_FILE" ]; then
   echo "No consume HTML found for: ${SLUG}"
   echo "Expected: ${HTML_FILE}"
   echo ""
   echo "Available slugs:"
-  ls -1 "$(dirname "$0")/../consume/" 2>/dev/null || echo "  (none)"
+  ls -1 "$ROOT/consume/" 2>/dev/null || echo "  (none)"
   exit 1
 fi
 

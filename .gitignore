@@ -1,3 +1,19 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# .gitignore conventions for this plugin
+#
+# Patterns for "specific directories at the repo root" MUST start with `/` to
+# anchor them. A bare `consume/` would also match `skills/consume/` (or
+# anywhere else in the tree) and silently exclude plugin assets that share a
+# name with a user-output directory. We hit this exact bug once: a `consume/`
+# rule excluded `skills/consume/SKILL.md`. Don't repeat it.
+#
+# Patterns for "leaf files that can appear anywhere" (e.g. `.DS_Store`,
+# `*.pyc`) are intentionally unanchored — they should match at any depth.
+#
+# After modifying this file, run `tools/check-tracked.sh` to confirm the
+# expected set of plugin assets is still tracked.
+# ─────────────────────────────────────────────────────────────────────────────
+
 # User-generated research output (per-user, not part of the plugin)
 /research/
 /data/
@@ -12,5 +28,5 @@
 tools/__pycache__/
 *.pyc
 
-# OS junk
+# OS junk (anywhere in tree)
 .DS_Store

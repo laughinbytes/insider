@@ -27,7 +27,7 @@ for arg in "${@:2}"; do
   esac
 done
 
-ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+ROOT="${INSIDER_PROJECT_ROOT:-$(pwd)}"
 HTML_FILE="$ROOT/consume/$SLUG/index.html"
 CLAIMS_FILE="$ROOT/data/claims.jsonl"
 NUMERICS_FILE="$ROOT/consume/$SLUG/numerics.json"

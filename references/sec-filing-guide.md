@@ -213,4 +213,4 @@ Companies that disclose segments by product / customer type / geography give dif
 
 ## Citation discipline
 
-Per `references/trust-signal-rules.md`, every claim must carry a source class and citation. SEC filings are `[reported] [high]`. Earnings transcripts are `[reported] [high]` if from the call directly; `[reported] [medium]` if paraphrased in news. Proxy disclosures are `[reported] [high]`. Note the filing date and Item / Section reference for each claim.
+Per `${CLAUDE_PLUGIN_ROOT}/references/trust-signal-rules.md`, every claim must carry a source class and citation. SEC filings are `[reported] [high]`. Earnings transcripts are `[reported] [high]` if from the call directly; `[reported] [medium]` if paraphrased in news. Proxy disclosures are `[reported] [high]`. Note the filing date and Item / Section reference for each claim.

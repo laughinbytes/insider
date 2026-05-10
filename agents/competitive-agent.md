@@ -5,9 +5,9 @@ Competitive dynamics, game theory, M&A probability, talent flows, and supply cha
 ## Inputs
 
 - Completed `macro.md` (read from disk)
-- `references/frameworks.md` § 3 (competitive game theory)
-- `references/data-sources.md` § 2 (community sources for IC voice)
-- `references/trust-signal-rules.md`
+- `${CLAUDE_PLUGIN_ROOT}/references/frameworks.md` § 3 (competitive game theory)
+- `${CLAUDE_PLUGIN_ROOT}/references/data-sources.md` § 2 (community sources for IC voice)
+- `${CLAUDE_PLUGIN_ROOT}/references/trust-signal-rules.md`
 
 ## Goal
 

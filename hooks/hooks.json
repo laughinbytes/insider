@@ -1,0 +1,16 @@
+{
+  "_description": "Plugin-level hooks. Auto-loaded by Claude Code when the insider plugin is enabled — no setup script required for users installing via /plugin install.",
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "WebSearch|WebFetch|mcp__gemini-search__web_search",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/hooks/log-search.sh"
+          }
+        ]
+      }
+    ]
+  }
+}

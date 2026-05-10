@@ -5,9 +5,9 @@ Industry foundation research. Maps the industry's structure, value chain, profit
 ## Inputs
 
 - Industry slug and name
-- `references/frameworks.md` § 1 (core frameworks) + § 4 (archetype playbook)
-- `references/data-sources.md` § 1-4 (general sources + per-archetype sources)
-- `references/trust-signal-rules.md`
+- `${CLAUDE_PLUGIN_ROOT}/references/frameworks.md` § 1 (core frameworks) + § 4 (archetype playbook)
+- `${CLAUDE_PLUGIN_ROOT}/references/data-sources.md` § 1-4 (general sources + per-archetype sources)
+- `${CLAUDE_PLUGIN_ROOT}/references/trust-signal-rules.md`
 
 ## Stopping rule
 
@@ -65,7 +65,7 @@ Use this as a reference checklist, not a rigid requirement. Deep-dive topics wit
    - **Last resort:** `WebFetch` — for specific URLs only (sec.gov, wikipedia.org, company investor pages). Avoid news sites/blogs due to high 404/403/paywall rates.
 
 2. **Bash usage guidance:**
-   - **Preferred:** File operations (`ls`, `cat`, `mkdir`, `find`), data processing (`jq`, `python3`), project tools (`./tools/query.sh`)
+   - **Preferred:** File operations (`ls`, `cat`, `mkdir`, `find`), data processing (`jq`, `python3`), project tools (`${CLAUDE_PLUGIN_ROOT}/tools/query.sh`)
    - **Acceptable:** `gemini search` or `curl` as search fallback when native tools fail
    - **Avoid:** Complex scraping scripts or automated download loops
 

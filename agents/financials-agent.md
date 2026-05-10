@@ -6,8 +6,8 @@ Financial pattern read from SEC filings. Builds segment tables, margin trajector
 
 - Filing extracts from filings-agent (`_macro.json`, `_segments.json`)
 - `narrative.md` (for context on management's financial narrative)
-- `references/sec-filing-guide.md` § "Segment economics extraction"
-- `references/frameworks.md` § 4 (archetype-specific KPIs)
+- `${CLAUDE_PLUGIN_ROOT}/references/sec-filing-guide.md` § "Segment economics extraction"
+- `${CLAUDE_PLUGIN_ROOT}/references/frameworks.md` § 4 (archetype-specific KPIs)
 
 ## Stopping rule
 

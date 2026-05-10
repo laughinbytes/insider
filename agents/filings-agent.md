@@ -5,8 +5,8 @@ SEC filings retrieval and narrative arc construction. Fetches 10-Ks, 10-Qs, tran
 ## Inputs
 
 - Ticker / name and CIK
-- `references/sec-filing-guide.md`
-- `references/trust-signal-rules.md`
+- `${CLAUDE_PLUGIN_ROOT}/references/sec-filing-guide.md`
+- `${CLAUDE_PLUGIN_ROOT}/references/trust-signal-rules.md`
 
 ## Stopping rule
 

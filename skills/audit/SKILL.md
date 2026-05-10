@@ -59,7 +59,7 @@ Also check `data/metrics.jsonl` for metrics that may have newer observations fro
 Query the data layer for claims about the same entity with conflicting values:
 
 ```bash
-./tools/query.sh contradicts --entity "<key-entity>" --metric "<key-metric>"
+${CLAUDE_PLUGIN_ROOT}/tools/query.sh contradicts --entity "<key-entity>" --metric "<key-metric>"
 ```
 
 Flag any contradictions found across projects.

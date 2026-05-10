@@ -4,7 +4,7 @@ Read-only quality agent. Runs after Phase 4 (consume) to catch logical and seman
 
 ## When to run
 
-Phase 4.5, after `consume-agent` completes and `tools/verify-numerics.sh` runs. The numeric verifier catches "this number isn't grounded"; this agent catches "these grounded numbers don't fit together logically."
+Phase 4.5, after `consume-agent` completes and `${CLAUDE_PLUGIN_ROOT}/tools/verify-numerics.sh` runs. The numeric verifier catches "this number isn't grounded"; this agent catches "these grounded numbers don't fit together logically."
 
 ## Inputs
 
@@ -12,7 +12,7 @@ Phase 4.5, after `consume-agent` completes and `tools/verify-numerics.sh` runs. 
 - `research/<type>s/<slug>/*.md` — all raw markdown
 - `data/claims.jsonl` (filter to current project)
 - `data/sources.jsonl` (for source-claim spot-checks)
-- `references/trust-signal-rules.md` — for staleness windows and inference rules
+- `${CLAUDE_PLUGIN_ROOT}/references/trust-signal-rules.md` — for staleness windows and inference rules
 
 ## What to check (in priority order)
 
@@ -120,7 +120,7 @@ Write structured findings to `.checkpoint/<type>s/<slug>/phase-4.5-logic-review.
 
 ## Known limitations (do NOT try to compensate for these with narrow checks)
 
-This agent's checks cover semantic errors that are detectable from the artifact + research files alone. There are three error classes that this agent **structurally cannot catch** — see `references/known-open-problems.md`:
+This agent's checks cover semantic errors that are detectable from the artifact + research files alone. There are three error classes that this agent **structurally cannot catch** — see `${CLAUDE_PLUGIN_ROOT}/references/known-open-problems.md`:
 
 1. **Conceptual-model fit** — chart primitives applied to underlying realities they don't fit (e.g., flow used for a hierarchy / overlap relationship)
 2. **Constituent plausibility** — declared values that are syntactically right but factually wrong by 2-3x
@@ -141,7 +141,7 @@ There is no time limit. Process every applicable check for the project, then sto
 ## Tool usage
 
 - **Read** — consume HTML, raw markdown, claims.jsonl, sources.jsonl
-- **Bash + jq** — filter and aggregate claims, run `tools/verify-numerics.sh`, compute denominators
+- **Bash + jq** — filter and aggregate claims, run `${CLAUDE_PLUGIN_ROOT}/tools/verify-numerics.sh`, compute denominators
 - **WebFetch** — for source-claim spot-checks (only for high-leverage claims; budget ≤5 fetches per project)
 - **Write** — only the `.checkpoint/<type>s/<slug>/phase-4.5-logic-review.json` output
 

@@ -107,7 +107,7 @@ Check that key content is present. Do NOT count sections or require specific for
 | 3 | **Bilingual toggle works** — EN/中文 switcher functions | Click toggle |
 | 4 | **Inline SVG charts render** | Count `<svg>` tags |
 | 5 | **Numerical consistency** — every figure/percentage uses an explicit, consistent denominator across charts and tables | See sub-checks below |
-| 6 | **numerics.json 100% coverage** — every numeric token in HTML appears in numerics.json with a resolvable claim_id (or `derived: true`) | Run `tools/verify-numerics.sh <slug>`; coverage section must report 0 uncovered |
+| 6 | **numerics.json 100% coverage** — every numeric token in HTML appears in numerics.json with a resolvable claim_id (or `derived: true`) | Run `${CLAUDE_PLUGIN_ROOT}/tools/verify-numerics.sh <slug>`; coverage section must report 0 uncovered |
 | 7 | **No fabrication** — every numeric value in HTML traces to a specific claim_id in `data/claims.jsonl`, after format normalization | Cross-check numerics.json `claim_ids[]` against claims.jsonl |
 
 ### Sub-checks for #5 (numerical consistency)
@@ -122,7 +122,7 @@ A failure on any sub-check is a MAJOR gap — page is CONDITIONAL, not FAIL, unl
 
 ### Sub-checks for #6 (coverage) and #7 (no fabrication)
 
-- Run `tools/verify-numerics.sh <slug>` — exit code 0 required
+- Run `${CLAUDE_PLUGIN_ROOT}/tools/verify-numerics.sh <slug>` — exit code 0 required
 - Every annotation in numerics.json has resolvable `claim_ids[]` OR `derived: true` with explicit context
 - Every numeric token in HTML (after extraction) is matched by an annotation
 - No claim_id in numerics.json points to a different project_slug (cross-project copy = CRITICAL fabrication)

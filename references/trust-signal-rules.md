@@ -25,7 +25,7 @@ Four levels: `[high]`, `[medium-high]`, `[medium]`, `[low]`. Map source class + 
 - `[community]` with 2 posts, anonymous -> `[low]`
 - `[inference]` -> `[low]` always
 
-`data/schemas.md` and `references/data-sources.md` § 6 use the same 4-level scale; do not introduce additional levels.
+`${CLAUDE_PLUGIN_ROOT}/references/schemas.md` and `${CLAUDE_PLUGIN_ROOT}/references/data-sources.md` § 6 use the same 4-level scale; do not introduce additional levels.
 
 ## Staleness
 

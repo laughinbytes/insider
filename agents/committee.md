@@ -8,9 +8,9 @@ After `synthesis-agent` completes and passes the Quality Gate (4 bottom lines me
 
 ## Committee members (spawn in parallel)
 
-1. **`agents/investor-agent.md`** — Would this lead to an investment decision?
-2. **`agents/expert-agent.md`** — Would an industry insider find this novel?
-3. **`agents/skeptic-agent.md`** — What are the vulnerabilities?
+1. **`${CLAUDE_PLUGIN_ROOT}/agents/investor-agent.md`** — Would this lead to an investment decision?
+2. **`${CLAUDE_PLUGIN_ROOT}/agents/expert-agent.md`** — Would an industry insider find this novel?
+3. **`${CLAUDE_PLUGIN_ROOT}/agents/skeptic-agent.md`** — What are the vulnerabilities?
 
 ## Voting process
 

@@ -12,7 +12,6 @@ Produces structured company analysis using parallel specialized agents. **No fix
 ## Pipeline
 
 ```
-Phase 0: Hooks bootstrap          (blocking)    → ensure .claude/settings.json has search-backup hooks
 Phase 1: filings-agent            (blocking)    → narrative.md + raw filing extracts
 Phase 2: financials-agent         (parallel)    → financials.md
           competitive-agent       (parallel)    → competitive.md
@@ -21,11 +20,9 @@ Phase 3.7: data-extraction-agent  (blocking)    → claims/sources/entities/metr
 Phase 4: consume-agent            (blocking)    → consume/<slug>/index.html (single bilingual file, zero deps)
 ```
 
-## Phase 0 — Hooks bootstrap
+## Permissions
 
-Same as `/industry` Phase 0: verify `.claude/settings.json` has the `WebSearch|WebFetch|mcp__gemini-search__web_search` PostToolUse hook. Run `./tools/setup.sh` if missing.
-
-Permissions are handled by Claude Code's runtime prompts — no auto-merge of permissions. `.claude-plugin/required-permissions.json` documents the tools sub-agents need but is informational only.
+Same as `/industry`: `.claude-plugin/required-permissions.json` documents the tools sub-agents need. Claude Code prompts the user the first time each tool is invoked; granted permissions are written to `.claude/settings.local.json` automatically. The search-backup `PostToolUse` hook ships as `${CLAUDE_PLUGIN_ROOT}/hooks/hooks.json` and loads automatically when the plugin is enabled — no setup script needed.
 
 ## Inputs
 
@@ -58,9 +55,9 @@ On invocation:
 
 Spawn `filings-agent` via Task tool. Pass:
 - Ticker / name and CIK
-- `agents/filings-agent.md`
-- `references/sec-filing-guide.md`
-- `references/trust-signal-rules.md`
+- `${CLAUDE_PLUGIN_ROOT}/agents/filings-agent.md`
+- `${CLAUDE_PLUGIN_ROOT}/references/sec-filing-guide.md`
+- `${CLAUDE_PLUGIN_ROOT}/references/trust-signal-rules.md`
 
 The agent:
 1. Fetches latest 10-K (or 20-F), 10-Q, 4–8 earnings transcripts, DEF 14A, recent 8-Ks
@@ -86,18 +83,18 @@ After filings complete, spawn TWO agents in parallel:
 **Agent A: financials-agent**
 - Reads filing extracts + narrative.md
 - Writes `research/companies/<slug>/financials.md`
-- Context: `agents/financials-agent.md` + sec-filing-guide
+- Context: `${CLAUDE_PLUGIN_ROOT}/agents/financials-agent.md` + sec-filing-guide
 
 **Agent B: competitive-agent**
 - Reads narrative.md + industry context if available
 - Writes `research/companies/<slug>/competitive.md`
-- Context: `agents/competitive-agent.md`
+- Context: `${CLAUDE_PLUGIN_ROOT}/agents/competitive-agent.md`
 
 Both run simultaneously. Orchestrator waits for both.
 
 ### Review gate
 
-Spawn `review-agent` for Phase 2 economics + competitive checks (see `agents/review-agent.md`). For company research, "economics" maps to financials.md and "competitive" maps to competitive.md.
+Spawn `review-agent` for Phase 2 economics + competitive checks (see `${CLAUDE_PLUGIN_ROOT}/agents/review-agent.md`). For company research, "economics" maps to financials.md and "competitive" maps to competitive.md.
 
 ### Checkpoint 2
 
@@ -111,8 +108,8 @@ Same as industry Phase 2: retry failed agents once, mark partial if needed.
 
 Spawn `synthesis-agent` via Task tool. Pass:
 - All completed raw files: `narrative.md`, `financials.md`, `competitive.md`
-- `agents/synthesis-agent.md`
-- `references/trust-signal-rules.md`
+- `${CLAUDE_PLUGIN_ROOT}/agents/synthesis-agent.md`
+- `${CLAUDE_PLUGIN_ROOT}/references/trust-signal-rules.md`
 
 The agent writes:
 - `thesis.md`
@@ -136,8 +133,8 @@ Write `.checkpoint/companies/<slug>/phase-3-synthesis.json`.
 
 Spawn `data-extraction-agent` via Task tool. Pass:
 - All raw files in `research/companies/<slug>/`
-- `agents/data-extraction-agent.md`
-- `data/schemas.md`
+- `${CLAUDE_PLUGIN_ROOT}/agents/data-extraction-agent.md`
+- `${CLAUDE_PLUGIN_ROOT}/references/schemas.md`
 
 Writes/appends `data/claims.jsonl`, `data/sources.jsonl`, `data/entities.json`, `data/metrics.jsonl`.
 
@@ -157,8 +154,8 @@ Spawn `review-agent` for Phase 4 checks (zero CDN, thesis clear, bilingual toggl
 
 Same two-stage verifier as the industry pipeline (see `skills/industry/SKILL.md` § "Phase 4.5"):
 
-1. **Code stage**: `./tools/verify-numerics.sh <slug>` cross-checks every numeric token in the consume HTML against `data/claims.jsonl`. Exit 0 = matched, 1 = unmatched / stale.
-2. **LLM stage**: spawn `agents/logic-verifier-agent.md` for chart-arithmetic, cross-file contradictions, definition drift, inference-chain validity, source-claim spot-checks. Writes `.checkpoint/companies/<slug>/phase-4.5-logic-review.json`.
+1. **Code stage**: `${CLAUDE_PLUGIN_ROOT}/tools/verify-numerics.sh <slug>` cross-checks every numeric token in the consume HTML against `data/claims.jsonl`. Exit 0 = matched, 1 = unmatched / stale.
+2. **LLM stage**: spawn `${CLAUDE_PLUGIN_ROOT}/agents/logic-verifier-agent.md` for chart-arithmetic, cross-file contradictions, definition drift, inference-chain validity, source-claim spot-checks. Writes `.checkpoint/companies/<slug>/phase-4.5-logic-review.json`.
 
 Verdict mapping is the same: PASS / CONDITIONAL / FAIL → if FAIL, regenerate via `consume-agent` Round 2 with the findings list.
 

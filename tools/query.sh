@@ -14,8 +14,9 @@
 
 set -e
 
-DATA_DIR="${DATA_DIR:-$(dirname "$0")/../data}"
-CHECKPOINT_DIR="${CHECKPOINT_DIR:-$(dirname "$0")/../.checkpoint}"
+ROOT="${INSIDER_PROJECT_ROOT:-$(pwd)}"
+DATA_DIR="${DATA_DIR:-$ROOT/data}"
+CHECKPOINT_DIR="${CHECKPOINT_DIR:-$ROOT/.checkpoint}"
 COMMAND="$1"
 shift
 
