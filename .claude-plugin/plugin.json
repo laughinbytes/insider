@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "insider",
+  "version": "0.2.0",
+  "description": "Deep-dive industry and company analysis with structured data layer. VC / equity-research-grade breakdowns with claims database, entity tracking, and source health monitoring.",
+  "author": { "name": "Chuang" },
+  "homepage": "",
+  "repository": "",
+  "license": "MIT",
+  "keywords": [
+    "research",
+    "industry-analysis",
+    "company-analysis",
+    "vc",
+    "equity-research",
+    "agents",
+    "claude-code-plugin"
+  ]
+}

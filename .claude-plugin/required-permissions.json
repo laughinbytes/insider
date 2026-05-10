@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "_description": "Declarative permission manifest for the insider plugin. These permissions are required for sub-agents (macro, economics, competitive, synthesis, consume) to function correctly.",
+  "_version": "0.2.0",
+  "permissions": {
+    "allow": [
+      {
+        "tool": "Read",
+        "scope": "all",
+        "required_by": ["macro", "economics", "competitive", "synthesis", "consume"],
+        "reason": "Agents read reference files, raw research, and checkpoint state"
+      },
+      {
+        "tool": "Write",
+        "scope": "all",
+        "required_by": ["macro", "economics", "competitive", "synthesis", "consume"],
+        "reason": "Agents write research output, checkpoints, and consume artifacts"
+      },
+      {
+        "tool": "Edit",
+        "scope": "all",
+        "required_by": ["synthesis", "consume"],
+        "reason": "Agents incrementally update files during long research sessions"
+      },
+      {
+        "tool": "WebFetch",
+        "scope": "all",
+        "required_by": ["macro", "economics", "competitive"],
+        "reason": "Agents fetch primary sources (SEC filings, earnings transcripts, blogs) — URLs are discovered at runtime, cannot be pre-listed"
+      },
+      {
+        "tool": "WebSearch",
+        "scope": "all",
+        "required_by": ["macro", "economics", "competitive"],
+        "reason": "Agents search for company data, talent moves, M&A rumors, regulatory changes"
+      },
+      {
+        "tool": "mcp__gemini-search__web_search",
+        "scope": "all",
+        "required_by": ["macro", "economics", "competitive"],
+        "reason": "Fallback search when WebSearch fails; used as circuit-breaker fallback"
+      },
+      {
+        "tool": "Bash",
+        "scope": "all",
+        "required_by": ["macro", "economics", "competitive", "consume"],
+        "reason": "Agents run helper scripts (query.sh, jq, python3), file operations, and data extraction"
+      },
+      {
+        "tool": "Agent",
+        "scope": "all",
+        "required_by": ["orchestrator"],
+        "reason": "Parent spawns parallel sub-agents for Phase 2 and sequential agents for other phases"
+      }
+    ]
+  },
+  "_auto_configure": true,
+  "_configure_target": ".claude/settings.json"
+}
