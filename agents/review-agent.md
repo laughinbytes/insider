@@ -109,6 +109,7 @@ Check that key content is present. Do NOT count sections or require specific for
 | 5 | **Numerical consistency** — every figure/percentage uses an explicit, consistent denominator across charts and tables | See sub-checks below |
 | 6 | **numerics.json 100% coverage** — every numeric token in HTML appears in numerics.json with a resolvable claim_id (or `derived: true`) | Run `${CLAUDE_PLUGIN_ROOT}/tools/verify-numerics.sh <slug>`; coverage section must report 0 uncovered |
 | 7 | **No fabrication** — every numeric value in HTML traces to a specific claim_id in `data/claims.jsonl`, after format normalization | Cross-check numerics.json `claim_ids[]` against claims.jsonl |
+| 8 | **Reading layer clean** — `reading/<slug>/` contains only `index.html` + `numerics.json`. No screenshots, draft HTML, `.backup/`, `.tmp` files, or other QA / debugging cruft | `ls reading/<slug>/`; or run `${CLAUDE_PLUGIN_ROOT}/tools/clean.sh` (any output = MAJOR gap) |
 
 ### Sub-checks for #5 (numerical consistency)
 
@@ -128,9 +129,9 @@ A failure on any sub-check is a MAJOR gap — page is CONDITIONAL, not FAIL, unl
 - No claim_id in numerics.json points to a different project_slug (cross-project copy = CRITICAL fabrication)
 
 **Verdict:**
-- All 7 checks pass → **PASS**
-- 5-6 checks pass → **CONDITIONAL**
-- ≤4 checks pass → **FAIL → Round 2**
+- All 8 checks pass → **PASS**
+- 6-7 checks pass → **CONDITIONAL**
+- ≤5 checks pass → **FAIL → Round 2**
 
 **Critical gaps (auto-FAIL):**
 - A numeric value in HTML has no matching claim_id (fabrication)

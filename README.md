@@ -190,6 +190,24 @@ Mitigations are layered (anti-amorphous-label rule, transition constituent decom
 ./tools/query.sh webfetch-failures --stats
 ```
 
+## Cleanup
+
+```bash
+./tools/clean.sh           # dry-run: list cruft candidates, no deletion
+./tools/clean.sh --apply   # actually delete
+```
+
+Removes anything outside the per-directory allowlist:
+
+| Directory | Allowlist | Anything else flagged |
+|---|---|---|
+| `reading/<slug>/` | `index.html`, `numerics.json` | screenshots, drafts, `.backup/`, etc. |
+| `research/<slug>/` | `*.md`, `meta.json` | tmp / draft files |
+| `data/` | `*.jsonl`, `*.json` | tmp / backups |
+| `.checkpoint/` | `*.json`, `*.jsonl`, `README.md` | tmp / backups |
+
+Plus always-cruft anywhere: `*.tmp`, `*.bak`, `*.old`, `*~`, `.DS_Store`, `__pycache__/`. Empty `reading/<slug>/` (no `index.html`) is also flagged.
+
 ## Consumption
 
 - **Primary**: Open `reading/<slug>/index.html` in any browser (single file, EN/中文 toggle, zero deps)

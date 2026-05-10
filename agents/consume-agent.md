@@ -392,10 +392,12 @@ Good:
 
 ## Output
 
-Write **two** files:
+Write **two** files, and **only** these two:
 
 1. `reading/<slug>/index.html` — the bilingual single-file page.
 2. `reading/<slug>/numerics.json` — structured manifest covering **100% of numeric tokens** in the page (hero metrics, every chart bar, every table cell, every open-secret figure, every scenario percentage and range, every footer count, every callout figure). Schema lives in `${CLAUDE_PLUGIN_ROOT}/references/schemas.md` § "reading/<slug>/numerics.json". No exceptions: if a number appears in the HTML, it must appear in numerics.json with a resolvable `claim_ids[]` or with `"derived": true` and explicit context. The verifier coverage check is strict — uncovered tokens trigger MAJOR gaps in Phase 4 review.
+
+**Reading layer is for production artifacts only.** Do NOT write screenshots, PNGs, draft HTML, `.backup/` snapshots, `.tmp` files, or any other QA / debugging artifact into `reading/<slug>/`. The reading layer is the human-facing deliverable — it ships only `index.html` + `numerics.json`. If a workflow needs to capture screenshots for visual verification, write them to `.checkpoint/screenshots/<slug>/` (the checkpoint layer is the natural home for ephemeral QA state). The Phase 4 review gate flags any unexpected file in `reading/<slug>/` as MAJOR; `${CLAUDE_PLUGIN_ROOT}/tools/clean.sh` lists and (with `--apply`) deletes anything outside the two-file allowlist.
 
 Build the complete bilingual HTML in your working memory, run the pre-write numerical self-check (above), enumerate every numeric token, then write both files in two `Write` calls. After writing, run `${CLAUDE_PLUGIN_ROOT}/tools/verify-numerics.sh <slug>` and confirm exit code 0 before returning.
 
